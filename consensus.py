@@ -21,6 +21,7 @@ def consensus(seqDict):
 	height={}
 	n=0		#number of non-gap letters at position i
 	consensus=[]
+	e=19/(2*log(2)*len(seqDict[id[0]]))	#small-sample correction
 
 	for i in xrange(len(seqDict[id[0]])):
 		for key in id:
@@ -35,7 +36,7 @@ def consensus(seqDict):
 			aaDict[k]/=n
 			h+=aaDict[k]*log(aaDict[k], 2)
 
-		r=log(20,2)+h
+		r=log(20,2)+h-e
 		h=0
 		n=0
 
@@ -51,9 +52,9 @@ def consensus(seqDict):
 			elif height[k] > second[1]:
 				second=(k, height[k])
 
-		if first[1]>log(20,2)*0.5:
+		if first[1]>(log(20,2)-e)*0.5:
 			consensus.append(first[0])
-		elif (first[1]+second[1])>log(20,2)*0.75:
+		elif (first[1]+second[1])>(log(20,2)-e)*0.75:
 			consensus.append(first[0]+'/'+second[0])
 		else:
 			consensus.append('*')
