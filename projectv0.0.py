@@ -9,13 +9,6 @@ import subprocess as sub, subprocess
 import re
 
 
-handle = open(sys.argv[1], "rU")
-seqDict={}
-for record in SeqIO.parse(handle, "fasta") :
-	seqDict[record.id]=record.seq.data
-handle.close()
-
-
 def PredSecondaryStructure(seqDict):
   
   """ wersja v0.0 nie korzystająca z zewnętrznej białkowej bazy danych.
