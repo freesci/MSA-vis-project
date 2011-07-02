@@ -20,7 +20,7 @@ def PredSecondaryStructure(seqDict):
   sequences = seqDict.values()
 
   dic={}
-  for i in xrange(len(sequences[1])):
+  for i in xrange(len(sequences[0])):
     dic[i+1]=[]
     
   for number_seq,seq in enumerate(sequences, start=0):
