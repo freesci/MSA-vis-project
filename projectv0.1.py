@@ -26,9 +26,8 @@ def PredSecondaryStructure(seqDict):
   for number_seq,seq in enumerate(sequences, start=0):
     where_no_gaps=[]  
     for t,i in enumerate(seq, start=1):
-      if i!="-":
-	dic[t].append((0,0,0)) # gap
-	where_no_gaps.append(t)
+      if i!="-":     where_no_gaps.append(t)
+      else:          dic[t].append((0,0,0)) # gap
 
     # dla kazdej sekwencji tworzę plik w formacie fasta i wykorzystuje go przy uruchomieniu runpsipred_simple
     seq_seq = SeqRecord(Seq(seq), id = id[number_seq])
