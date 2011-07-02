@@ -81,5 +81,3 @@ def PredSecondaryStructure(seqDict):
     if maximum==strand:	pred_structure.append("s")
 
   return pred_structure
- 
-print(PredSecondaryStructure(seqDict))
