@@ -5,7 +5,6 @@ matplotlib.use('Svg')
 import matplotlib.cm as cm
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
-import matplotlib.transforms as trans
 import numpy as np
 from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
 
