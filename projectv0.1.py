@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import os
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -48,10 +49,7 @@ def PredSecondaryStructure(seqDict):
       pred,coil,helix,strand = line[7],float(line[11:16]),float(line[18:23]),float(line[25:30])
       dic[where_no_gaps[l-1]].append((coil,helix,strand))
   
-    subprocess.call(["rm","tmp"+str(number_seq)+".fasta"])
-    subprocess.call(["rm", "tmp"+str(number_seq)+".ss"])
-    subprocess.call(["rm", "tmp"+str(number_seq)+".ss2"])
-    subprocess.call(["rm", "tmp"+str(number_seq)+".horiz"])
+    os.system("rm -rf tmp%s.fasta tmp%s.ss tmp%s.ss2 tmp%s.horiz" % (number_seq, number_seq, number_seq, number_seq))
   
   pred_structure=[]
   for key,value in dic.iteritems():
