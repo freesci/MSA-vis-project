@@ -34,6 +34,9 @@ def PredSecondaryStructure(seqDict):
 
     p = sub.Popen(["./runpsipred", tmp_filename], stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.STDOUT) # psipred pomija gapy w sekwencji
     child_output, child_error = p.communicate(input="234")
+    if child_output:
+      print child_output
+      exit(1) 
 
     # wczytuję jeden z wynikowych plików programu psipred_single
     match = re.match("([^.]).[^.]*", tmp_filename)
