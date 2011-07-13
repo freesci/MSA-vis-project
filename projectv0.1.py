@@ -51,7 +51,7 @@ def PredSecondaryStructure(seqDict):
     for i in l:  os.remove([i])  
 
   pred_structure=[]
-  for key,value in dic.iteritems():
+  for value in dic.values():
     coil,helix,strand=0.0,0.0,0.0
     for tuple in value:
 	coil+=tuple[0]
