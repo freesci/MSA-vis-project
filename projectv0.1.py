@@ -12,11 +12,6 @@ import re
 
 def PredSecondaryStructure(seqDict):
   
-  """ wersja v0.1 nie korzystająca z zewnętrznej białkowej bazy danych.
-      Program wykorzystuje prawdopodobieństwa wyliczone przez runpsipred_simple dla wystąpienia petli,
-      helisy i kartki dla odpowiednich pozycji aminokwasow w podanych sekwencjach bialkowych,
-      zwraca listę stringów: "c"=coil, "h"=helix, "s"=strand """
-  
   id = seqDict.keys()
   sequences = seqDict.values()
 
@@ -37,7 +32,7 @@ def PredSecondaryStructure(seqDict):
     SeqIO.write(seq_seq, output_handle, "fasta")
     output_handle.close()
 
-    p = sub.Popen(["./runpsipred_single", tmp_filename], stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.STDOUT) # psipred pomija gapy w sekwencji
+    p = sub.Popen(["./runpsipred", tmp_filename], stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.STDOUT) # psipred pomija gapy w sekwencji
     child_output, child_error = p.communicate(input="234")
 
     # wczytuję jeden z wynikowych plików programu psipred_single
