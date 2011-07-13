@@ -6,7 +6,7 @@ import os
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-import subprocess as sub, subprocess
+import subprocess as sub
 import re
 
 
@@ -47,8 +47,9 @@ def PredSecondaryStructure(seqDict):
       pred,coil,helix,strand = line[7],float(line[11:16]),float(line[18:23]),float(line[25:30])
       dic[where_no_gaps[l-1]].append((coil,helix,strand))
   
-    os.system("rm -rf tmp%s.fasta tmp%s.ss tmp%s.ss2 tmp%s.horiz" % (number_seq, number_seq, number_seq, number_seq))
-  
+    l = ["tmp"+number_seq+".fasta","tmp"+number_seq+".ss","tmp"+number_seq+".ss2","tmp"+number_seq+".horiz"]
+    for i in l:  os.remove([i])  
+
   pred_structure=[]
   for key,value in dic.iteritems():
     coil,helix,strand=0.0,0.0,0.0
