@@ -528,7 +528,6 @@ def window(fig):
 
 if __name__ == "__main__":
   
- print(len(dictionary))
  consensus = consensus(dictionary)
  stru = pred_secondary_structure(dictionary)
  hydro, chain = stat(dictionary,readKD())
