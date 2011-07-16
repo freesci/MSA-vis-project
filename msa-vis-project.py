@@ -97,15 +97,15 @@ inp=checkinp(parser, inp)
 def seqDict(ifile):
     def has_key(d,key):
         if d.has_key(key.id):
-            if d[key.id]!=key.seq.data:
+            if d[key.id]!=key:
                 key.id=key.id+"(1)"
     	return key
     def has_value(d,value):
-        present=False
-        for val in d.items():
-            if val[1]==value.seq.data:
-                present=True
-        return present
+       present=False
+       for val in d.items():
+           if val[1].seq.data==value.seq.data:
+               present=True
+       return present
 
     def equal_length(seq,num,lens):
         if len(seq.seq.data)!=lens:
@@ -114,7 +114,6 @@ def seqDict(ifile):
             sys.exit()
 
     seqDict={}
-    iteration=1
 
     try:
 	handle = open(ifile, "rU")
@@ -124,11 +123,11 @@ def seqDict(ifile):
 
     try:
         for record in SeqIO.parse(handle, "fasta") :
-            if len(seqDict)==0: seqDict[record.id]=record.seq.data
+            if len(seqDict)==0: seqDict[record.id]=record
             else:
                 if has_value(seqDict,record)==False:
                     record=has_key(seqDict,record)
-                    seqDict[record.id]=record.seq.data	        
+                    seqDict[record.id]=record	        
     except IndexError:
         print colored("Error: Sequence without ID found\n---------------------------------------------",'red')
         parser.print_help()
@@ -153,7 +152,7 @@ if nam>len(dictionary.values()[0]):
 
 """
 arguments:
-	list_of_seq - values of sequence dictionary
+	list_of_seq - values of sequence dictionary print stru
 """	
 def cd_hit(list_of_seq):
 
@@ -189,7 +188,7 @@ def cd_hit(list_of_seq):
 		try:
 			b = subprocess.check_output(["cd-hit","-i",ip,"-o",op,"-c",str(th[nr-1][0]/100.),"-n",str(th[nr-1][1])])
 		except Exception:
-			print "Please downland and install cd-hit v4.5.4 from http://code.google.com/p/cdhit/downloads/list"
+			print "Please download and install cd-hit v4.5.4 from http://code.google.com/p/cdhit/downloads/list"
 			exit(1)
 		# parsing output
 		m = re.search('(finished).*(clusters)',b)
@@ -226,8 +225,8 @@ def cd_hit(list_of_seq):
 
 
 	return record[:15]
-	
-	
+
+
 
 
 """
@@ -284,12 +283,12 @@ def consensus(seqDict):
 		aaDict={}
 		height={}
 	return consensus
-	
-	
-	
+
+
+
 
 """ 
-    You can use runpsipred (with psi-blast) or runpsipred_single (without psi-blast) program to predicting secondary structure.
+    Use runpsipred (with psi-blast) or runpsipred_single (without psi-blast) program to predicting secondary structure.
     Sequence database available on http://www.ebi.ac.uk/uniprot/database/download.html.
     See more in README.
     arguments:
@@ -312,10 +311,9 @@ def pred_secondary_structure(seqDict):
       else:		dic[t].append((0,0,0)) # gap
 
     # creating current_seq_temp (necessary for runpsipred)
-    seq_seq = SeqRecord(Seq(seq), id = id[number_seq])
     output_handle = open("current_seq_temp.fasta", "w")
     try:
-      SeqIO.write(seq_seq, output_handle, "fasta")
+      SeqIO.write(seq, output_handle, "fasta")
     finally:
       output_handle.close()
 
@@ -328,7 +326,8 @@ def pred_secondary_structure(seqDict):
       file_tmp=open("current_seq_temp.ss", "r")
     except Exception:
       print "Problem with opening resulting file runpsipred."
-      print "Please downland and install runpsipred from http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/"
+      print "You can download and install runpsipred from http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/"
+      print "If it's already installed please check variable child_error and child_output in code."
       exit(1)
 
     for l,line in enumerate(file_tmp, start=1):
@@ -354,12 +353,12 @@ def pred_secondary_structure(seqDict):
 
   return pred_structure
 
-	
+
 
 
 
 """ 
-  reading file with KD scale
+  reading file with Kyte Doolitle scale 
   
 """
 def readKD():
@@ -529,11 +528,11 @@ def window(fig):
 
 if __name__ == "__main__":
   
- 
+ print(len(dictionary))
  consensus = consensus(dictionary)
  stru = pred_secondary_structure(dictionary)
  hydro, chain = stat(dictionary,readKD())
  cd_hit = cd_hit(dictionary)
- 
 
- chart(consensus, hydro, chain, stru, cd_hit, out, nam)
+ fig = chart(consensus, hydro, chain, stru, cd_hit, out, nam)
+ window(fig)
