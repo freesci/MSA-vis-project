@@ -152,7 +152,7 @@ if nam>len(dictionary.values()[0]):
 
 """
 arguments:
-	list_of_seq - values of sequence dictionary print stru
+	list_of_seq - values of sequence dictionary
 """	
 def cd_hit(list_of_seq):
 
