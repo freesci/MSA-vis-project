@@ -189,7 +189,7 @@ def cd_hit(list_of_seq):
 		try:
 			b = subprocess.check_output(["cd-hit","-i",ip,"-o",op,"-c",str(th[nr-1][0]/100.),"-n",str(th[nr-1][1])])
 		except Exception:
-			print "Please install cd-hit"
+			print "Please downland and install cd-hit v4.5.4 from http://code.google.com/p/cdhit/downloads/list"
 			exit(1)
 		# parsing output
 		m = re.search('(finished).*(clusters)',b)
@@ -289,8 +289,9 @@ def consensus(seqDict):
 	
 
 """ 
-    You can use runpsipred (with psi-blast) or runpsipred_single (without psi-blast) program to predicting secondary structure. 
-    See more in README_PSIPRED.
+    You can use runpsipred (with psi-blast) or runpsipred_single (without psi-blast) program to predicting secondary structure.
+    Sequence database available on http://www.ebi.ac.uk/uniprot/database/download.html.
+    See more in README.
     arguments:
 	seqDict - sequence dictionary
 """
@@ -327,6 +328,7 @@ def pred_secondary_structure(seqDict):
       file_tmp=open("current_seq_temp.ss", "r")
     except Exception:
       print "Problem with opening resulting file runpsipred."
+      print "Please downland and install runpsipred from http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/"
       exit(1)
 
     for l,line in enumerate(file_tmp, start=1):
