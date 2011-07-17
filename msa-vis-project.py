@@ -26,7 +26,7 @@ in order to use this.
 try:
 	import matplotlib
 except ImportError:
-	print "Matplotlib packages not found. Please download it."
+	print "Matplotlib packages not found. You may download it from: http://sourceforge.net/projects/matplotlib/files/matplotlib/matplotlib-1.0/"
 	exit(1)
 
 matplotlib.use('Svg')

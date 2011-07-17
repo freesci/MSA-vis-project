@@ -8,14 +8,7 @@ import subprocess as sub
 from math import log
 
 import gtk
-import matplotlib
-matplotlib.use('Svg')
-import matplotlib.cm as cm
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
-
 
 __doc__="""
 Use the msa-vis-project program to visualization MSA.
@@ -30,14 +23,23 @@ in order to use this.
 
 # READ ME: usuwamy powtarzajace sie sekwencje
 """
+try:
+	import matplotlib
+except ImportError:
+	print "Matplotlib packages not found. You may download it from: http://sourceforge.net/projects/matplotlib/files/matplotlib/matplotlib-1.0/"
+	exit(1)
 
-
+matplotlib.use('Svg')
+import matplotlib.cm as cm
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
 
 try:
 	import argparse
 except ImportError:
 	print "Argparse packages not found. You may download it from: http://argparse.googlecode.com/files/argparse-1.2.1.tar.gz"
-	pass
+	exit(1)
 
 try:
 	from Bio.Seq import Seq
@@ -45,13 +47,13 @@ try:
 	from Bio import SeqIO
 except ImportError:
 	print "Biopython packages not found. You may download it from: http://www.biosino.org/mirror/www.biopython.org/Download/default.htm"
-	pass
+	exit(1)
 
 try:
 	from termcolor import colored, cprint
 except ImportError:
 	print "Termcolor packages not found. You may download it from: http://pypi.python.org/pypi/termcolor"
-	pass
+	exit(1)
 
 def inpout():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
