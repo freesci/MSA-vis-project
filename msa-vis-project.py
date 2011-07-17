@@ -105,12 +105,12 @@ def seqDict(ifile):
     def has_value(d,value):
        present=False
        for val in d.items():
-           if val[1].seq.data==value.seq.data:
+           if val[1].seq.tostring()==value.seq.tostring():
                present=True
        return present
 
     def equal_length(seq,num,lens):
-        if len(seq.seq.data)!=lens:
+        if len(seq.seq.tostring())!=lens:
             print colored("Error: Sequences number "+str(num)+" aren't of the same length like the other\n-----------------------------------------",'red')
             parser.print_help()
             sys.exit()
