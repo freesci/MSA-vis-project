@@ -89,7 +89,7 @@ def seqDict(ifile):
     except IOError:
 	print colored("Error: File '"+ifile+"' doesn't exist\n----------------------------",'red')
         return None
-    non_el=False
+  
     #Adding sequences to the dictionary
     try:
         for record in SeqIO.parse(handle, "fasta") :
@@ -115,7 +115,7 @@ def seqDict(ifile):
     if len(seqDict)==0:
         print colored("Error: The specified file is empty\n----------------------------",'red')
         return None    
-    if non_el: return None
+
     return seqDict
 
 
