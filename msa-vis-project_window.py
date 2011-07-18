@@ -132,13 +132,13 @@ def seqDict(ifile):
     try:
         for record in SeqIO.parse(handle, "fasta") :
             if len(seqDict)==0: 
-                seqDict[record.id]=record.seq.data
+                seqDict[record.id]=record
 	        lenseq=len(record.seq.data)
             else:
 		if has_value(seqDict,record)==False:
 	            record=has_key(seqDict,record)
 		    equal_length(record,iteration,lenseq)
-	            seqDict[record.id]=record.seq.data
+	            seqDict[record.id]=record
 		    lenseq=len(record.seq.data)
 	    iteration+=1
     except IndexError:
