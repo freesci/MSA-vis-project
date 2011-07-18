@@ -163,8 +163,8 @@ def seqDict(ifile):
 dictionary=seqDict(inp)
 
 #Checks if number of aminoacids which user has entered is greater than the length of the sequence
-if nam>len(dictionary):
-	nam=len(dictionary)
+if nam>len(dictionary.values()[0]):
+	nam=len(dictionary.values()[0])
 
 
 
