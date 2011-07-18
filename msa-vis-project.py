@@ -136,7 +136,7 @@ def seqDict(ifile):
     try:
         for record in SeqIO.parse(handle, "fasta") :
             if len(seqDict)==0: 
-                seqDict[record.id]=record.seq.data
+                seqDict[record.id]=record
 	        lenseq=len(record.seq.data)
             else:
 		if has_value(seqDict,record)==False:
