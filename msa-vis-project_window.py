@@ -55,44 +55,6 @@ except ImportError:
 	print "Termcolor packages not found. You may download it from: http://pypi.python.org/pypi/termcolor"
 	exit(1)
 
-#Creating help
-def inpout():
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                     description='Visualisation of MSA',prog="MSA",
-                                     epilog=textwrap.dedent('''\
-                                     Details:
-                                     ----------
-                                     File with the MSA should contain sequences of the same length,
-                                     preceded by an identifier, which occurs after the ">".
-                                     Repetitive sequences will be omitted.
-                                     In other cases the file will be regarded as inpcorrect.'''))
-
-    parser.add_argument('inp', type=str, nargs='*', help='file .fasta with MSA')
-
-    parser.add_argument('-o', '--output', type=str, nargs='?',default="MSAvis",
-                        help='the name of the file where MSA visualization will be saved')
-
-    parser.add_argument('-a', '--aminoacids', type=int, nargs='?',default=30,
-                        help='number of aminoacids in one row in graph. Enter the number greater than 0 (Default 30).')
-
-    parser.add_argument('--version', action='version', version='%(prog)s 1.0\nAuthors: M.Habich, M.Maksymiuk, M.Stepniewska, K.Wreczycka')
-
-    args = parser.parse_args()
-    if len(os.path.splitext(args.output))>1:
-        args.output=os.path.splitext(args.output)[0]
-
-    if args.aminoacids < 1:
-        args.aminoacids=30
-
-    return args.inp, args.output, args.aminoacids, parser
-
-#Checks if user gives file and if not print help 
-def checkinp(parser,inp):
-    if len(inp)==0:
-        print colored("Error: Not specified data file\n----------------------------------",'red')
-        parser.print_help()
-        exit()
-    return inp[0]
 
 #Creating dictionary of sequences
 def seqDict(ifile):
@@ -114,9 +76,9 @@ def seqDict(ifile):
     #Checks if sequence which we wanted to add is the same length as the other
     def equal_length(seq,num,lens):
         if len(seq.seq.data)!=lens:
-            print colored("Error: Sequences number "+str(num)+" aren't of the same length like the other\n-----------------------------------------",'red')
-            parser.print_help()
-            exit()
+		print colored("Error: Sequences number "+str(num)+" aren't of the same length like the other\n-----------------------------------------",'red')
+		return False
+	else: return True
 
     seqDict={}
     iteration=1
@@ -126,8 +88,8 @@ def seqDict(ifile):
 	handle = open(ifile, "rU")
     except IOError:
 	print colored("Error: File '"+ifile+"' doesn't exist\n----------------------------",'red')
-        exit()
-    
+        return None
+    non_el=False
     #Adding sequences to the dictionary
     try:
         for record in SeqIO.parse(handle, "fasta") :
@@ -137,23 +99,23 @@ def seqDict(ifile):
             else:
 		if has_value(seqDict,record)==False:
 	            record=has_key(seqDict,record)
-		    equal_length(record,iteration,lenseq)
+		    if not equal_length(record,iteration,lenseq):
+		    	return None
+		    	break
 	            seqDict[record.id]=record
 		    lenseq=len(record.seq.data)
 	    iteration+=1
     except IndexError:
         print colored("Error: Sequence without ID found\n---------------------------------------------",'red')
-        parser.print_help()
-        exit()
+        return None
 
     handle.close()
 
     #Checks if file was empty
     if len(seqDict)==0:
         print colored("Error: The specified file is empty\n----------------------------",'red')
-        parser.print_help()
-        exit()     
-
+        return None    
+    if non_el: return None
     return seqDict
 
 
@@ -452,11 +414,11 @@ def chart(consensus, hydro, chain, stru, cd_hit, filename, col):
 	for r in xrange(rows):
 		#barchart
 		if  r==rows-1:
-			tmp=plt.axes([inchW, 1-(r+1)*(margin+height+seqH)-colBarH+seqH, (1-2*inchW)*(l-col*(rows-1))/float(col), height], xlabel="Amino Acid", ylabel='Hydrophobicity')
+			tmp=plt.axes([2*inchW, 1-(r+1)*(margin+height+seqH)-colBarH+seqH, (1-4*inchW)*(l-col*(rows-1))/float(col), height], xlabel="Amino Acid", ylabel='Hydrophobicity')
 			plt.axis([(rows-1)*col-0.5, l-0.5, -5, 5])    #min and max of the x and y axes
 			plt.xticks(range(col*(rows-1),l, 5))
 		else:
-			tmp=plt.axes([inchW, 1-(r+1)*(margin+height+seqH)-colBarH+seqH, 1-2*inchW, height], xlabel="Amino Acid", ylabel='Hydrophobicity')
+			tmp=plt.axes([2*inchW, 1-(r+1)*(margin+height+seqH)-colBarH+seqH, 1-4*inchW, height], xlabel="Amino Acid", ylabel='Hydrophobicity')
 		    	plt.axis([r*col-0.5, (r+1)*col-0.5, -5, 5])    #min and max of the x and y axes
 			plt.xticks(range(col*r,(r+1)*col, 5))
 
@@ -532,7 +494,7 @@ def window1():
 		print "output directory:",widget.get_filename()
 	
 	def helpWindow(widget):
-		info = "Use the msa-vis-project program to visualization MSA.\nYou need to have a working version of\n- argparse\n- biopython\n- termcolor\n- cd-hit\n- blast2, runpsipred\n- gtk, matplotlib\nin order to use this."
+		info = "File with the MSA should contain sequences of the same length, preceded by an identifier, which occurs after the \">\". In other cases the file will be regarded as inpcorrect. Repetitive sequences will be omitted.\n\nInput file: file .fasta with MSA\n\nOutput directory: directory where MSA visualization will be saved\n\nOutput filename: the name of the file where MSA visualization will be saved (default MSAvis)\n\nnumber of aas in row: number of aminoacids in one row in graph. Enter the number greater than 0 (Default 30)\n\n\nAuthors: M.Habich, M.Maksymiuk, M.Stepniewska, K.Wreczycka"
 		help = gtk.MessageDialog(parent=None, flags=gtk.DIALOG_DESTROY_WITH_PARENT, type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_NONE, message_format=info)
 		help.show_all()
 		help.connect("destroy", gtk.main_quit)
@@ -583,18 +545,27 @@ def window1():
 	goButton = gtk.Button("Submit!")
 	goButton.set_size_request(50,30)
 	
-	
-	def click(widget, inputFile=None, outputDir = None, uotputFile=None, col=None, database=None):
+
+	def click(widget, inputFile=None, outputDir = None, outputFile=None, col=None, database=None):
 		kd=readKD()
-		seq=seqDict(inputFile.get_filename())
-		cd=cd_hit(seq)
-		cons = consensus(seq)
-		stru = pred_secondary_structure(seq)
-		hydr, ch = stat(seq, kd)
-		fig = chart(cons, hydr, ch, stru, cd, outputDir.get_filename()+"/"+uotputFile.get_text(), int(col.get_text()))
-		print "Done! Your MSA visualisation was saved in '%s/%s.svg' file" % (outputDir.get_filename(), uotputFile.get_text())
-		win.destroy()
-		window2(fig)
+		if inputFile.get_filename()==0: print colored("Error: Not specified data file\n----------------------------------",'red')
+		else:
+			seq=seqDict(inputFile.get_filename())
+			if seq!=None:
+				if outputFile.get_text()=="": outputF="MSAvis"
+				else: outputF=outputFile.get_text()
+				if col.get_text()=="" : col=30
+				else: col=int(col.get_text())
+				if col<1: col=30
+				if col>len(seq.values()[0]): col=len(seq.values()[0])
+				cd=cd_hit(seq)
+				cons = consensus(seq)
+				stru = pred_secondary_structure(seq)
+				hydr, ch = stat(seq, kd)
+				fig = chart(cons, hydr, ch, stru, cd, outputDir.get_filename()+"/"+outputF, col)
+				print "Done! Your MSA visualisation was saved in '%s/%s.svg' file" % (outputDir.get_filename(), outputF)
+				win.destroy()
+				window2(fig)
 	
 	goButton.connect("clicked", click, inputButton, outputButton, outputEntry, columnsEntry, databaseCheckButton)	
 	

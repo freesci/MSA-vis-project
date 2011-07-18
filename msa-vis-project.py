@@ -470,11 +470,11 @@ def chart(consensus, hydro, chain, stru, cd_hit, filename, col):
 	for r in xrange(rows):
 		#barchart
 		if  r==rows-1:
-			tmp=plt.axes([inchW, 1-(r+1)*(margin+height+seqH)-colBarH+seqH, (1-2*inchW)*(l-col*(rows-1))/float(col), height], xlabel="Amino Acid", ylabel='Hydrophobicity')
+			tmp=plt.axes([2*inchW, 1-(r+1)*(margin+height+seqH)-colBarH+seqH, (1-4*inchW)*(l-col*(rows-1))/float(col), height], xlabel="Amino Acid", ylabel='Hydrophobicity')
 			plt.axis([(rows-1)*col-0.5, l-0.5, -5, 5])    #min and max of the x and y axes
 			plt.xticks(range(col*(rows-1),l, 5))
 		else:
-			tmp=plt.axes([inchW, 1-(r+1)*(margin+height+seqH)-colBarH+seqH, 1-2*inchW, height], xlabel="Amino Acid", ylabel='Hydrophobicity')
+			tmp=plt.axes([2*inchW, 1-(r+1)*(margin+height+seqH)-colBarH+seqH, 1-4*inchW, height], xlabel="Amino Acid", ylabel='Hydrophobicity')
 		    	plt.axis([r*col-0.5, (r+1)*col-0.5, -5, 5])    #min and max of the x and y axes
 			plt.xticks(range(col*r,(r+1)*col, 5))
 
