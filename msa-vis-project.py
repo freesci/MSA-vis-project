@@ -277,6 +277,10 @@ def consensus(seqDict):
 				else:
 					aaDict[seqDict[key][i]]=1.0
 				n+=1
+		if n==0:
+			print colored("Error: Wrong MSA. There is no non-gap letter on position "+str(i)+"\n-----------------------------------------",'red')
+			parser.print_help()
+        		exit(1)
 
 		for k in sorted(aaDict):
 			aaDict[k]/=n

@@ -123,12 +123,16 @@ def seqDict(ifile):
 arguments:
 	list_of_seq - values of sequence dictionary
 """	
-def cd_hit(list_of_seq):
+def cd_hit(dic_of_seq):
 
 	#if there are less than 15 seqs it is unnecessary to use cd-hit
-	if len(list_of_seq) < 15:
-		return list_of_seq
-
+	if len(dic_of_seq) < 15:
+		return dic_of_seq
+	
+	list_of_seq = dic_of_seq.values()
+	
+	for seq_record in list_of_seq:
+		seq_record = seq_record.seq.ungap('-')
 
 	#creating current_seq_temp (necessary for cd-hit)
 	current_seq_temp = open("current_seq_temp.fasta","w+")
@@ -181,6 +185,9 @@ def cd_hit(list_of_seq):
 			break
 
 	record = list(SeqIO.parse("current_seq_temp.fasta","fasta"))
+	dic_of_rec = {}
+	for x in record[:15]:
+		dic_of_rec[x.name] = dic_of_seq[x.name]
 
 	# removing temporary files
 
@@ -193,7 +200,7 @@ def cd_hit(list_of_seq):
 	os.remove("new_seq_temp.fasta.clstr")
 
 
-	return record[:15]
+	return dic_of_rec
 
 
 
@@ -221,7 +228,9 @@ def consensus(seqDict):
 				else:
 					aaDict[seqDict[key][i]]=1.0
 				n+=1
-
+		if n==0:
+			print colored("Error: Wrong MSA. There is no non-gap letter on position "+str(i)+"\n-----------------------------------------",'red')
+        		return None
 		for k in sorted(aaDict):
 			aaDict[k]/=n
 			h+=aaDict[k]*log(aaDict[k], 2)
@@ -558,14 +567,15 @@ def window1():
 				else: col=int(col.get_text())
 				if col<1: col=30
 				if col>len(seq.values()[0]): col=len(seq.values()[0])
-				cd=cd_hit(seq)
 				cons = consensus(seq)
-				stru = pred_secondary_structure(seq)
-				hydr, ch = stat(seq, kd)
-				fig = chart(cons, hydr, ch, stru, cd, outputDir.get_filename()+"/"+outputF, col)
-				print "Done! Your MSA visualisation was saved in '%s/%s.svg' file" % (outputDir.get_filename(), outputF)
-				win.destroy()
-				window2(fig)
+				if cons!=None: 
+					cd=cd_hit(seq)
+					stru = pred_secondary_structure(seq)
+					hydr, ch = stat(seq, kd)
+					fig = chart(cons, hydr, ch, stru, cd, outputDir.get_filename()+"/"+outputF, col)
+					print "Done! Your MSA visualisation was saved in '%s/%s.svg' file" % (outputDir.get_filename(), outputF)
+					win.destroy()
+					window2(fig)
 	
 	goButton.connect("clicked", click, inputButton, outputButton, outputEntry, columnsEntry, databaseCheckButton)	
 	
