@@ -236,7 +236,7 @@ def cd_hit(dic_of_seq):
 	record = list(SeqIO.parse("current_seq_temp.fasta","fasta"))
 	dic_of_rec = {}
 	for x in record[:15]:
-		dic_of_rec[x.name] = x
+		dic_of_rec[x.name] = dic_of_seq[x.name]
 
 	# removing temporary files
 
