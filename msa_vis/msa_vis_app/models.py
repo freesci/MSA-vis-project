@@ -1,5 +1,5 @@
 from django.db import models
-from django.forms import ModelFormv
+from django.forms import ModelForm
 
 #from django.core.files.storage import FileSystemStorage
 #fs = FileSystemStorage(location='/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/MSA-vis-project/MSA-vis-project') # w koncu nei uzylam tego w argumecie funkcji models.FileField, nie wiem czy slusznie
