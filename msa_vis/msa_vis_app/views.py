@@ -19,7 +19,7 @@ def first_page(request):
        ## Process the data in form.cleaned_data
        # powalczyc z tym file:///usr/share/doc/python-django-doc/html/ref/forms/api.html#binding-uploaded-files
        ## ...
-         return HttpResponseRedirect('msa_vis/msa_vis/edit/') # Redirect after POST
+         return HttpResponseRedirect('edit/') # Redirect after POST
       #else: # napisac wyjatek jesli uztkownik zle wypelni jakies pole
       
     else: # czyli tu tylko ogladanie strony first_page.html
