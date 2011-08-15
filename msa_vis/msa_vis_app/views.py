@@ -25,3 +25,6 @@ def first_page(request):
     else: # czyli tu tylko ogladanie strony first_page.html
       page_form = PageForm() # tu tworze pusty formularz
       return render_to_response("first_page.html",{"page_form":page_form})
+      
+def second_page(request):
+  return render_to_response("second_page.html",{})
