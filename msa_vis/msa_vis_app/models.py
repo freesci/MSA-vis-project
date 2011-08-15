@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ModelFormv
 
 #from django.core.files.storage import FileSystemStorage
 #fs = FileSystemStorage(location='/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/MSA-vis-project/MSA-vis-project') # w koncu nei uzylam tego w argumecie funkcji models.FileField, nie wiem czy slusznie
@@ -14,11 +15,6 @@ class Page(models.Model):
   
   def __unicode__(self): # ?!
     return self.sequences
-#asia@kasia-laptop:~/Pulpit/kasia/KASIA/IBB_praktyki/django/msa_vis$ ./manage.py syncdb 
-#Creating table msa_vis_app_page
-
-
-from django.forms import ModelForm
 
 class PageForm(ModelForm):
   class Meta:
