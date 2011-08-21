@@ -7,6 +7,8 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
+        
+        
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -41,7 +43,7 @@ MEDIA_ROOT = '/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/static/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -81,3 +83,9 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'msa_vis.msa_vis_app'
 )
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'nashiraV@gmail.com'
+EMAIL_HOST_PASSWORD = '***************'
+EMAIL_PORT = 587

@@ -1,3 +1,4 @@
+ 
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -5,8 +6,12 @@ import django
 from django.http import HttpResponse
 
 #def simple(request):
-  #return HttpResponse("Hello world")
-  
+#return HttpResponse("Hello world")
+#from Bio.Seq import Seq
+#from Bio.SeqRecord import SeqRecord
+#from Bio import SeqIO
+#output_handle = open("seqmsadjango.fasta", "w")
+#SeqIO.write(unicode(sequences), output_handle, "fasta")
 def simple(request):
   import matplotlib
   import matplotlib.pyplot as plt
@@ -60,6 +65,6 @@ def simple(request):
   plt.ylabel("Hydrophobicity")
 
   canvas=FigureCanvas(fig)
-  response=django.http.HttpResponse(content_type='image/png')
+  response=django.http.HttpResponse(content_type='image/png+xml')
   canvas.print_png(response)
   return response
