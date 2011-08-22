@@ -10,7 +10,7 @@ class Page(models.Model):
   seqID = models.CharField(max_length = "40",blank= True,help_text="(pole nieobowiazkowe)") # podobe pole do tego ze strony aln2plot - tam jesli uzytkownik nic w to pole nie wipisze, program sam wygeneruje losowe id
 
 class PageForm(ModelForm):
-  #def clean_sequences(self):        # walidacja na serwerze? ....
+  #def clean_sequences(self):        # ....
     #data = self.cleaned_data['sequences']
     #if "cos" not in data:
       #raise forms.ValidationError("You have forgotten about cos!")
