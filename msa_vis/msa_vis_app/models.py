@@ -11,7 +11,7 @@ class Page(models.Model):
   linewidth = models.IntegerField(max_length = 300,default=30,blank=True,null = True,help_text="(pole obowiazkowe); number of aminoacids in one row in graph, default=30")
 
 class PageForm(ModelForm):
-  #def clean_sequences(self):        # walidacja na serwerze? ....
+  #def clean_sequences(self):        # ....
     #data = self.cleaned_data['sequences']
     #if "cos" not in data:
       #raise forms.ValidationError("You have forgotten about cos!")
