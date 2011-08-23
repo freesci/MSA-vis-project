@@ -87,5 +87,5 @@ INSTALLED_APPS = (
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'nashiraV@gmail.com'
-EMAIL_HOST_PASSWORD = 'tusianka6'
+EMAIL_HOST_PASSWORD = '*************'
 EMAIL_PORT = 587
