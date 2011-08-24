@@ -9,12 +9,7 @@ urlpatterns = patterns('',
      #(r'^msa_vis/', include('msa_vis.foo.urls'))
      (r'^msa_vis/$', 'msa_vis.msa_vis_app.views.first_page'),
      (r'^msa_vis/edit/$', 'msa_vis.msa_vis_app.views.second_page'),
-<<<<<<< HEAD
      (r'^msa_vis/error/$', 'msa_vis.msa_vis_app.views.third_page'),
-=======
-     (r'^msa_vis/error1/$', 'msa_vis.msa_vis_app.views.third_page'),
-     (r'^chart_download/simple.png$', 'msa_vis_app.chart_download.simple')
->>>>>>> 26a1c9aafadb46ba8aa0d161f8246994477e31f5
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
