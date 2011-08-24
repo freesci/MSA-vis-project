@@ -36,10 +36,10 @@ def first_page(request):
 
 	if linewidth is not None:  linewidth= str(linewidth)
 	# mozliwe uzycie albo upload fieldu albo sequences jednoczesnie
-	print linewidth
-	if m.upload_file and sequences:		return HttpResponseRedirect('error1/')
+	if m.upload_file and sequences:		return HttpResponseRedirect('error/')
 	if m.upload_file: # tu problemem moze byc to, ze jesli uzytkownik zaladuje mnostwo razy plik o tej samej nazwie (wtedy w bazie dodawane sa kolejne "_" do nazwy pliku - ich dodawanie jest pewnie ograniczone) -  to moze sie zapchac baza..	  if not check_correctnessfile(m.upload_file.path): return HttpResponseRedirect('error1/')
 	  file_absolutepath = m.upload_file.path
+	  if not check_correctnessfile(file_absolutepath): return HttpResponseRedirect('error/')
 	  import subprocess as sub #rozwiazanie na teraz; latwo zapchac komputer jesli uztkownik odpali wiele procesow; system kolejkowania - zajrzec w google: celery
 	  if linewidth is not None:
 	    p = sub.Popen(["/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/msavisproject.py", file_absolutepath, "-o","MSAvis.svg", "-a",linewidth],cwd="/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/")
@@ -61,8 +61,8 @@ def first_page(request):
 	      output_handle.close()
 	      x.close()
 	    except:
-	      return HttpResponseRedirect('error1/')
-	    if not check_correctnessfile(f): return HttpResponseRedirect('error1/')
+	      return HttpResponseRedirect('error/')
+	    if not check_correctnessfile(f): return HttpResponseRedirect('error/')
 	    import subprocess as sub #rozwiazanie na teraz; latwo zapchac komputer jesli uztkownik odpali wiele procesow; system kolejkowania - zajrzec w google: celery
 	    if linewidth is not None:
 	      p = sub.Popen(["/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/msavisproject.py", f, "-o","MSAvis.svg","-a",linewidth],cwd="/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/")
@@ -70,7 +70,7 @@ def first_page(request):
 	      p = sub.Popen(["/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/msavisproject.py", f, "-o","MSAvis.svg"],cwd="/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/")
 	    child_output, child_error = p.communicate(input="234")
 	  else:
-	    return HttpResponseRedirect('error1/')
+	    return HttpResponseRedirect('error/')
 	 
 	#gdyby stara baza danych uniemozliwiala pojscie dalej - np. Type error i jakies krzaki
 	#/manage.py reset msa_vis_app
@@ -90,7 +90,7 @@ def first_page(request):
 	  msg.send()
 
         return render_to_response("second_page.html",{"seqID":seqID})
-      else: # napisac wyjatek jesli uztkownik zle wypelni jakies pole
+      else: # wyjatek jesli uztkownik zle wypelni jakies pole
 	return HttpResponseRedirect('error/')
     else: # tu tylko ogladanie strony first_page.html
       page_form = PageForm() # tu tworze pusty formularz
