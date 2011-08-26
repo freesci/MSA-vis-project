@@ -13,15 +13,25 @@ def check_correctnessfile(absolutefilepath):  # spr czy wprowadzone msa jest pra
 	      from Bio.SeqRecord import SeqRecord
 	      from Bio import SeqIO
 	      #http://biopython.org/DIST/docs/tutorial/Tutorial.html#SeqIO:to_dict
-	      seqDict = SeqIO.to_dict(SeqIO.parse(absolutefilepath, "fasta")) #spr czy zaladowany plik jest w formacie .fasta
+	      try:
+	      	seqDict = SeqIO.to_dict(SeqIO.parse(absolutefilepath, "fasta")) #spr czy zaladowany plik jest w formacie .fasta
+	      except KeyError:
+	      	#error1 = "Input contains repeated names of sequences!"
+	      	return False
 	      n=0
+	      #if len(seqDict) < 2: 
+		#error2 = "Input contains less than 2 sequences!"
 	      for i in xrange(len(seqDict.values()[0].seq)):
 		for key in seqDict.keys():
-		  if seqDict[key][i]!="-": # jesli na jakiejs pozycji we wszystkich sekwencjach jest "-", msa jest nieprawidlowe
+		  if seqDict[key][i]!="-":
 		    n+=1
-	      if n==0:	return False # Wrong MSA. There is no non-gap letter on position i 
+	      if n==0:
+	      	#error3 =  "Wrong MSA. There is no non-gap letter on position" + i
+	      	return False 
 	      return True
-	  except:	return False
+	  except:
+	  	#error4 = "Wrong MSA"
+	  	return False
 
 def first_page(request):
     if request.method == 'POST': # If the form has been submitted...
