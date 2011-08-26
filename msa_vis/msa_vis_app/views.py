@@ -15,7 +15,7 @@ def check_correctnessfile(absolutefilepath):  # spr czy wprowadzone msa jest pra
 	      #http://biopython.org/DIST/docs/tutorial/Tutorial.html#SeqIO:to_dict
 	      try:
 	      	seqDict = SeqIO.to_dict(SeqIO.parse(absolutefilepath, "fasta")) #spr czy zaladowany plik jest w formacie .fasta
-	      except KeyError:
+	      except ValueError:
 	      	#error1 = "Input contains repeated names of sequences!"
 	      	return False
 	      n=0
