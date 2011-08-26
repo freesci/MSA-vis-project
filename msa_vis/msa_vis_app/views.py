@@ -19,8 +19,9 @@ def check_correctnessfile(absolutefilepath):  # spr czy wprowadzone msa jest pra
 	      	#error1 = "Input contains repeated names of sequences!"
 	      	return False
 	      n=0
-	      #if len(seqDict) < 2: 
+	      if len(seqDict) < 2: 
 		#error2 = "Input contains less than 2 sequences!"
+		return False
 	      for i in xrange(len(seqDict.values()[0].seq)):
 		for key in seqDict.keys():
 		  if seqDict[key][i]!="-":
