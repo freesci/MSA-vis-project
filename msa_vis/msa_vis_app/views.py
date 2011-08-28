@@ -1,3 +1,4 @@
+
 # Create your views here.
 from msa_vis.msa_vis_app.models import Page,PageForm
 from django.shortcuts import render_to_response
@@ -36,6 +37,7 @@ def check_correctnessfile(absolutefilepath):  # spr czy wprowadzone msa jest pra
 
 def first_page(request):
     if request.method == 'POST': # If the form has been submitted...
+      form = PageForm(request.POST,request.FILES)
       if form.is_valid(): # All validation rules pass
       
 	mail = form.cleaned_data["email"]
