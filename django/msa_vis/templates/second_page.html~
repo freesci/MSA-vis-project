@@ -4,12 +4,13 @@
   </head>
   <body>
       <h1>MSA vis</h1>
-      <p>  seqID: {{seqID}}; Picture:
-      <img src="/static/uploaded_files/MSAvis{{seqID}}.svg" />
+      <p>  jobID: {{jobID}}; Picture:
+      <img src="/static/uploaded_files/MSAvis{{jobID}}.svg" />
       </p>
       <p>
-      <a href="/static/uploaded_files/MSAvis{{seqID}}.svg">Full screen png</a>
+      <a href="/static/uploaded_files/MSAvis{{jobID}}.svg">Full screen svg</a>
       </p>
       <a href="/msa_vis/">New MSA visualization</a>
+      <p>You can fing your image <a href='http://127.0.0.1:8000/msa_vis/result/{{jobID}}/'>here</a>.</p>
   </body>
 </html> 

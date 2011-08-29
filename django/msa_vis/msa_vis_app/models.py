@@ -7,12 +7,12 @@ class Page(models.Model):
   sequences = models.TextField(max_length = 150,blank= True,help_text="(Max dlugosc seq <= 150)") # help_text nie jest najladniejszym rozwiazaniem w widoku formularzu...
   upload_file = models.FileField(upload_to = "uploaded_files", blank= True, help_text="(Wybierz plik w formacie fasta)") # uploaded_files jest katalogiem tworzonym wzgledem MEDIA_ROOT
   email = models.EmailField(max_length = 20,blank= True,help_text="(pole nieobowiazkowe)") #blank=True, aby to pole moglo pozostac puste przy wypelnianiu pol
-  seqID = models.CharField(max_length = 40,blank= True,help_text="(pole nieobowiazkowe)") # podobe pole do tego ze strony aln2plot - tam jesli uzytkownik nic w to pole nie wipisze, program sam wygeneruje losowe id
+  unixtime = models.IntegerField(blank= True) # podobe pole do tego ze strony aln2plot - tam jesli uzytkownik nic w to pole nie wipisze, program sam wygeneruje losowe id
   linewidth = models.IntegerField(max_length = 300,default=30,blank=True,null = True,help_text="(pole nieobowiazkowe); number of aminoacids in one row in graph, default=30")
 
 class PageForm(ModelForm):
   class Meta:
     model = Page
-    fields = ('sequences', 'email','seqID',"linewidth","upload_file") # kolejnosc wyswietlania na stronie
+    fields = ('sequences', 'email',"linewidth","upload_file") # kolejnosc wyswietlania na stronie
     
     

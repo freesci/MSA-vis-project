@@ -1,4 +1,3 @@
-
 # Create your views here.
 from msa_vis.msa_vis_app.models import Page,PageForm
 from django.shortcuts import render_to_response
@@ -6,6 +5,9 @@ from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.template import Context, loader
 from models import PageForm
+import msa_vis.settings as settings
+from time import time
+import os
 
 
 def check_correctnessfile(absolutefilepath):  # spr czy wprowadzone msa jest prawidlowe
@@ -36,17 +38,20 @@ def check_correctnessfile(absolutefilepath):  # spr czy wprowadzone msa jest pra
 	  	return False
 
 def first_page(request):
-    if request.method == 'POST': # If the form has been submitted...
-      form = PageForm(request.POST,request.FILES)
-      if form.is_valid(): # All validation rules pass
+   if request.method == 'POST':
+     utime = int(time())
+     page = Page(unixtime= utime)
+     form = PageForm(request.POST,request.FILES,instance=page)
+     if form.is_valid():
       
 	mail = form.cleaned_data["email"]
 	sequences = form.cleaned_data["sequences"]
-	seqID = form.cleaned_data["seqID"]
 	linewidth = form.cleaned_data["linewidth"]
 
 	m=form.save()
-
+	
+	jobID = str(m.id)+str(utime)
+	
 	if linewidth is not None:  linewidth= str(linewidth)
 	# mozliwe uzycie albo upload fieldu albo sequences jednoczesnie
 	if m.upload_file and sequences:		return HttpResponseRedirect('error/')
@@ -55,14 +60,15 @@ def first_page(request):
 	  if not check_correctnessfile(file_absolutepath): return HttpResponseRedirect('error/')
 	  import subprocess as sub #rozwiazanie na teraz; latwo zapchac komputer jesli uztkownik odpali wiele procesow; system kolejkowania - zajrzec w google: celery
 	  if linewidth is not None:
-	    p = sub.Popen(["/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/msavisproject.py", file_absolutepath, "-o","MSAvis.svg", "-a",linewidth],cwd="/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/")
+	    p = sub.Popen([settings.MEDIA_ROOT+"uploaded_files/msavisproject.py", file_absolutepath, "-o","MSAvis"+str(jobID)+".svg", "-a",linewidth],cwd=settings.MEDIA_ROOT+"uploaded_files/")
 	  else:
-	    p = sub.Popen(["/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/msavisproject.py", file_absolutepath, "-o","MSAvis.svg"],cwd="/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/")
+	    p = sub.Popen([settings.MEDIA_ROOT+"uploaded_files/msavisproject.py", file_absolutepath, "-o","MSAvis"+str(jobID)+".svg"],cwd=settings.MEDIA_ROOT+"uploaded_files/")
 	  child_output, child_error = p.communicate(input="234")
+	  os.remove(file_absolutepath)
 	else: # jesli nie zostal zaladowany plik w UploadField, to oczekuje, ze zostala wprowadzana sekwencja do field'u sequences
 	
 	  if sequences!="":
-	    f = "/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/filename.fasta"
+	    f = settings.MEDIA_ROOT+"uploaded_files/filename.fasta"
 	    try:
 	      from Bio import AlignIO
 	      from Bio import SeqIO
@@ -78,39 +84,38 @@ def first_page(request):
 	    if not check_correctnessfile(f): return HttpResponseRedirect('error/')
 	    import subprocess as sub #rozwiazanie na teraz; latwo zapchac komputer jesli uztkownik odpali wiele procesow; system kolejkowania - zajrzec w google: celery
 	    if linewidth is not None:
-	      p = sub.Popen(["/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/msavisproject.py", f, "-o","MSAvis.svg","-a",linewidth],cwd="/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/")
+	      p = sub.Popen([settings.MEDIA_ROOT+"uploaded_files/msavisproject.py", f, "-o","MSAvis"+str(jobID)+".svg","-a",linewidth],cwd=settings.MEDIA_ROOT+"uploaded_files/")
 	    else:
-	      p = sub.Popen(["/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/msavisproject.py", f, "-o","MSAvis.svg"],cwd="/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/")
+	      p = sub.Popen([settings.MEDIA_ROOT+"uploaded_files/msavisproject.py", f, "-o","MSAvis"+str(jobID)+".svg"],cwd=settings.MEDIA_ROOT+"uploaded_files/")
 	    child_output, child_error = p.communicate(input="234")
+	    os.remove(settings.MEDIA_ROOT+"uploaded_files/filename.fasta")
 	  else:
 	    return HttpResponseRedirect('error/')
-	 
+
 	#gdyby stara baza danych uniemozliwiala pojscie dalej - np. Type error i jakies krzaki
 	#/manage.py reset msa_vis_app
 	# usuniecie wszsytkich tabel dotyczacych aplikacji z bazy danych i utworzenie ich na nowo
 	# ./manage syncdb
 		
-	if seqID=="":
-	  import random
-	  seqID = random.random()
+
 	if mail!="":
 	  from django.core.mail import EmailMessage
 	  text_content = 'This is an important message.'
-	  html_content = '<p>This is an <strong>important</strong> message.</p>'
-	  msg = EmailMessage('subject',html_content,to = [mail])
+	  html_content = '<p>You can fing your image <a href=http://127.0.0.1:8000/msa_vis/result/'+jobID+'>here</a>.</p>'
+	  msg = EmailMessage('MSA visualisation',html_content,to = [mail])
 	  msg.content_subtype = "html"
-	  msg.attach_file("/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/uploaded_files/MSAvis.svg")
+	  msg.attach_file(settings.MEDIA_ROOT+"uploaded_files/MSAvis"+str(jobID)+".svg")
 	  msg.send()
 
-        return render_to_response("second_page.html",{"seqID":seqID})
-      else: # wyjatek jesli uztkownik zle wypelni jakies pole
+        return render_to_response("second_page.html",{"jobID":jobID})
+     else: # wyjatek jesli uztkownik zle wypelni jakies pole
 	return HttpResponseRedirect('error/')
-    else: # tu tylko ogladanie strony first_page.html
+   else: # tu tylko ogladanie strony first_page.html
       page_form = PageForm() # tu tworze pusty formularz
       return render_to_response("first_page.html",{"page_form":page_form})
  
-def second_page(request,seqID):
-  return render_to_response("second_page.html",{"seqID":seqID})
+def second_page(request,jobID):
+  return render_to_response("second_page.html",{"jobID":jobID})
   
 def third_page(request):
   return render_to_response("third_page.html",{})

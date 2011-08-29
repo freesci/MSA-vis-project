@@ -400,7 +400,7 @@ def pred_secondary_structure(seqDict):
 def readKD():
 
 	KD={}
-	f=open(PATH+"uploaded_files/KD.scale","r")
+	f=open('/home/marta/Dokumenty/praktyki/django/media/uploaded_files/KD.scale',"r")
 	lines=f.readlines()
 	for i in xrange(1, len(lines)):
 		tmp=lines[i].split()
