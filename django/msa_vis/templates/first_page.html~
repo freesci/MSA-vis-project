@@ -50,7 +50,7 @@ ul.errorlist {
 		  {{ field }}
         </div>
     {% endfor %}
-
+    Submit your job
     <p><input type="submit" value="Submit!" /></p>
 </form>
 

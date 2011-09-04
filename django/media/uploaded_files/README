@@ -59,17 +59,12 @@ tcsh% make install
 The executables will be placed in the PSIPRED bin directory.
 
 You must also install the PSI-BLAST and Impala software from the
-NCBI toolkit, and also install appropriate sequence data banks. We
-recommend the uniref90 protein dataset as a suitably large and "complete"
-set of proteins.
+NCBI toolkit, and also install appropriate sequence data banks.
 
 The NCBI toolkit can be obtained from URL ftp://ftp.ncbi.nih.gov
 
 PSI-BLAST executables can be obtained from ftp://ftp.ncbi.nih.gov/blast
 
-You will then need to edit the variables at the head of the runpsipred script
-to point at the installation locations for PSI-BLAST and the blast database
-(uniref90)
 
 EXAMPLE USAGE
 =============
