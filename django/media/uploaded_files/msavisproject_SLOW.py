@@ -353,6 +353,7 @@ def pred_secondary_structure(seqDict):
     # calling runpsipred
     p = sub.Popen([MEDIA_PATH + "uploaded_files/runpsipred", MEDIA_PATH + "uploaded_files/current_seq_temp.fasta"], cwd=MEDIA_PATH + "uploaded_files/", stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.STDOUT)
     child_output, child_error = p.communicate(input="234")
+    print child_output
 
     # loading one of the resulting files runpsipred
     try:
