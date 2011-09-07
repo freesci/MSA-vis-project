@@ -1,5 +1,5 @@
 from django.db import models
-from django.forms import ModelForm, Textarea
+from django.forms import ModelForm
 from django import forms
 
 # Create your models here.
@@ -30,6 +30,7 @@ class PageForm(forms.ModelForm):
     except:
       msg = "Input is not in FASTA format!"
       self._errors[fields_name] = self.error_class([msg])
+      del cleaned_data[fields_name]
       return
     try:
       seqDict = SeqIO.to_dict(s)
@@ -37,11 +38,13 @@ class PageForm(forms.ModelForm):
       x.close()
       msg = "Input contains repeated names of sequences!"
       self._errors[fields_name] = self.error_class([msg])
+      del cleaned_data[fields_name]
       return
     if len(seqDict)==0:
       x.close()
       msg = "Input is not in FASTA format or the specified file is empty!"
       self._errors[fields_name] = self.error_class([msg])
+      del cleaned_data[fields_name]
       return
     l=0  
     for i in xrange(len(seqDict.values())):
@@ -52,12 +55,14 @@ class PageForm(forms.ModelForm):
 	  x.close()
 	  msg = "Sequence number %d isn't of the same length like the other" % i
 	  self._errors[fields_name] = self.error_class([msg])
+	  del cleaned_data[fields_name]
 	  return
 
     if len(seqDict) < 2:
       x.close()
       msg = "Input contains less than 2 sequences!"
       self._errors[fields_name] = self.error_class([msg])
+      del cleaned_data[fields_name]
       return
     n=0
     for i in xrange(len(seqDict.values()[0].seq)):
@@ -68,6 +73,7 @@ class PageForm(forms.ModelForm):
       x.close()
       msg = "Wrong MSA. There is no non-gap letter on position %d!" % i
       self._errors[fields_name] = self.error_class([msg])
+      del cleaned_data[fields_name]
       return
 
   def clean(self):
