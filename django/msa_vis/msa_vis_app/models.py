@@ -82,23 +82,23 @@ class PageForm(forms.ModelForm):
       msg = 'You must specify an input source!'
       self._errors["sequences"] = self.error_class([msg])
       del cleaned_data["sequences"]
+      
     if sequences!="" and upload_file!=None:
       msg = 'Select alignment or upload a local file'
       self._errors["sequences"] = self.error_class([msg])
       del cleaned_data["sequences"]
 
-    if sequences!="":
+    if sequences!="" and upload_file==None:
       self.check_correctness(sequences,"sequences")
       del cleaned_data["sequences"]
 	
-    if upload_file!=None:
+    if upload_file!=None and sequences=="":
       content = upload_file.read()
       self.check_correctness(content,"upload_file")
       del cleaned_data["upload_file"]
       
        
     return self.cleaned_data
-
 
   class Meta:
     model = Page
