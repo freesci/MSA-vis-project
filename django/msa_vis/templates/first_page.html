@@ -3,7 +3,7 @@
 <style type="text/css">
 body {
  background-color: white;
- color: blue;
+ color: black;
 }
 H1 {
  text-align: left
@@ -36,14 +36,46 @@ ul.errorlist {
 
 
 <form action="/msa_vis/" method="POST" enctype="multipart/form-data" >
-    {% for field in form %}
+
         <div class="fieldWrapper">
 	    
-            {{ field.errors }}
-	    <p>{{field.help_text}}</p>
-		  {{ field }}
+	  <br>  {{form.sequences.help_text}} </br>
+            {{ form.sequences.errors }}
+		{{form.sequences}}
         </div>
-    {% endfor %}
+
+
+
+        <div class="fieldWrapper">
+	    
+	  <br>  {{form.upload_file.help_text}}</br>
+            {{ form.upload_file.errors }}
+		{{form.upload_file}}
+        </div>
+
+
+        <div class="fieldWrapper">
+
+	  <br>  {{form.email.help_text}}</br>
+            {{ form.email.errors }}
+		{{form.email}}
+        </div>
+
+
+        <div class="fieldWrapper">
+
+	  <br>  {{form.linewidth.help_text}}</br>
+            {{ form.linewidth.errors }}
+		{{form.linewidth}}
+        </div>
+
+
+        <div class="fieldWrapper">
+
+	   <br> {{form.choice.help_text}}</br>
+            {{ form.choice.errors }}
+		{{form.choice}}
+        </div>
 
     <p><input type="submit" value="Submit!" /></p>
 </form>

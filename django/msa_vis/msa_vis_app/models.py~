@@ -14,9 +14,9 @@ class Page(models.Model):
   upload_file = models.FileField(upload_to = "uploaded_files", blank= True, help_text="Or upload a file") # uploaded_files jest katalogiem tworzonym wzgledem MEDIA_ROOT
   email = models.EmailField(max_length = 20,blank= True,help_text="Send visualization to (optional):") #blank=True, aby to pole moglo pozostac puste przy wypelnianiu pol
   unixtime = models.IntegerField(max_length = 40)
-  choice = models.CharField(max_length=4, choices=gchoices,default = "Slow")
+  choice = models.CharField(max_length=4, choices=gchoices, default = "Slow")
   linewidth = models.IntegerField(max_length = 300,default=30,blank=True,null = True,help_text="Number of aminoacids in one row in graph (default=30)")
-    
+
 class PageForm(forms.ModelForm):
   choice = forms.CharField(max_length=4, widget=forms.Select(choices=gchoices),help_text="Predict secondary structure (PSIPRED) with PSI-BLAST or without")
   
@@ -38,11 +38,13 @@ class PageForm(forms.ModelForm):
       x.close()
       msg = "Input contains repeated names of sequences!"
       self._errors[fields_name] = self.error_class([msg])
+      del cleaned_data[fields_name]
       return
     if len(seqDict)==0:
       x.close()
       msg = "Input is not in FASTA format or the specified file is empty!"
       self._errors[fields_name] = self.error_class([msg])
+      del cleaned_data[fields_name]
       return
     l=0  
     for i in xrange(len(seqDict.values())):
@@ -53,12 +55,14 @@ class PageForm(forms.ModelForm):
 	  x.close()
 	  msg = "Sequence number %d isn't of the same length like the other" % i
 	  self._errors[fields_name] = self.error_class([msg])
+	  del cleaned_data[fields_name]
 	  return
 
     if len(seqDict) < 2:
       x.close()
       msg = "Input contains less than 2 sequences!"
       self._errors[fields_name] = self.error_class([msg])
+      del cleaned_data[fields_name]
       return
     n=0
     for i in xrange(len(seqDict.values()[0].seq)):
@@ -69,6 +73,7 @@ class PageForm(forms.ModelForm):
       x.close()
       msg = "Wrong MSA. There is no non-gap letter on position %d!" % i
       self._errors[fields_name] = self.error_class([msg])
+      del cleaned_data[fields_name]
       return
 
   def clean(self):
@@ -89,13 +94,10 @@ class PageForm(forms.ModelForm):
 
     if sequences!="":
       self.check_correctness(sequences,"sequences")
-      del cleaned_data["sequences"]
 	
     if upload_file!=None:
       content = upload_file.read()
       self.check_correctness(content,"upload_file")
-      del cleaned_data["upload_file"]
-      
        
     return self.cleaned_data
 
