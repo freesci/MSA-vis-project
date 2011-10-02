@@ -1,19 +1,35 @@
 <html>
   <head>
-    <title> MSA VIS </title>
+    <title> MSAvis </title>
   </head>
   <body>
-      <h1>MSA vis </h1>
+      <a href="http://www.ibb.waw.pl"><img src="http://www.ibb.waw.pl/themes/ibb/logo.png" border=0></a>
+      <h1>MSA visualization </h1>
+      <table cellpadding="1" cellspacing="1">
+      <td bgcolor="#2E8B57" width="600">
+      <font color="#DCDCDC"><b>Result</b></font>
+      </table>
       <p>
       <pre>JobID: {{jobID}}       Date: {{datetime}} </pre>
       </p>
       <p> Result:
-      <img src="/static/uploaded_files/MSAvis{{jobID}}.svg" alt="MSAvis{{jobID}}.svg" />
       </p>
       <p>
-      <a href="/static/uploaded_files/MSAvis{{jobID}}.svg">Full screen svg</a>
+      <a href="/static/uploaded_files/MSAvis{{jobID}}.svg"><img src="/static/uploaded_files/MSAvis{{jobID}}.svg" alt="MSAvis{{jobID}}.svg" width=1000 high=200 />
       </p>
-      <a href="/msa_vis/">New MSA visualization</a>
-      <p>You can find your image <a href='http://127.0.0.1:8000/msa_vis/result/{{jobID}}/'>here</a>.</p>
+      <p>
+      <table cellpadding="1" cellspacing="1">
+      <td bgcolor="#2E8B57" width="600">
+      <font color="#DCDCDC"><b>Options</b></font>
+      </table>
+      </p>
+      <p><a href="/static/uploaded_files/MSAvis{{jobID}}.svg" target=_blank>Full screen svg</a></p>
+      <form><input type="button" value="New MSA visualization" onClick="window.location.href='/msa_vis'"></form>
+
+      <script type="text/javascript">
+      if (window.print) {
+         document.write('<input type="button" onclick="window.print()"'+
+                   ' value="Print This Page">'); }
+      </script>
   </body>
-</html> 
+</html>

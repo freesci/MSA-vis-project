@@ -26,16 +26,21 @@ ul.errorlist {
 }
 </style>
 
- <html>
+<html>
   <head>
-    <title> Msavis </title>
+    <!-- TODO MONIKA: można dodać jeszcze ikonę, która się wyświetli w zakładce (do zrobienia po konsultacji ze szczęsnym) -->
+    <title> MSAvis </title>
   </head>
   <body>
-      <h1>Msavis</h1>
-
-
+      <a href="http://www.ibb.waw.pl"><img src="http://www.ibb.waw.pl/themes/ibb/logo.png" border=0></a>
+      <h1>MSA visualization</h1>
 
 <form action="/msa_vis/" method="POST" enctype="multipart/form-data" >
+
+        <table cellpadding="1" cellspacing="1">
+        <td bgcolor="#2E8B57" width="600">
+        <font color="#DCDCDC"><b>Input</b></font>
+        </table>
 
         <div class="fieldWrapper">
 	    
@@ -53,6 +58,11 @@ ul.errorlist {
 		{{form.upload_file}}
         </div>
 
+        <p></p>
+        <table cellpadding="1" cellspacing="1">
+        <td bgcolor="#2E8B57" width="600">
+        <font color="#DCDCDC"><b>Options</b></font>
+        </table>
 
         <div class="fieldWrapper">
 
@@ -77,9 +87,9 @@ ul.errorlist {
 		{{form.choice}}
         </div>
 
-    <p><input type="submit" value="Submit!" /></p>
+    <p><input type="submit" value="Submit!"/></p>
 </form>
 
-   <p><a href="/msa_vis/">Refresh</a></p> 
+   <p><a href="/msa_vis/">Refresh</a></p>
   </body> 
 </html>

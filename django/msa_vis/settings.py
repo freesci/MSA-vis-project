@@ -7,12 +7,12 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
-        
-        
+
+
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'database'             # Or path to database file if using sqlite3.
+DATABASE_NAME = '/home/marta/Dokumenty/praktyki/django_nowy/msa_vis/database'             # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -38,7 +38,7 @@ USE_I18N = True
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 # czyli miejse gdzie leza rzeczy (media), ktore uzywaja/wysla.
-MEDIA_ROOT = '/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/'
+MEDIA_ROOT = '/home/marta/Dokumenty/praktyki/django_nowy/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -72,8 +72,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/django/msa_vis/templates"
-    
+    "/home/marta/Dokumenty/praktyki/django_nowy/msa_vis/templates"
+
 )
 
 INSTALLED_APPS = (
@@ -81,7 +81,8 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'msa_vis.msa_vis_app'
+    'msa_vis.msa_vis_app',
+    'django_extensions'
 )
 
 EMAIL_USE_TLS = True

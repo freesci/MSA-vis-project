@@ -90,12 +90,18 @@ class PageForm(forms.ModelForm):
 
     if sequences!="" and upload_file==None:
       self.check_correctness(sequences,"sequences")
-      del cleaned_data["sequences"]
+     # del cleaned_data["sequences"]
 	
     if upload_file!=None and sequences=="":
       content = upload_file.read()
       self.check_correctness(content,"upload_file")
-      del cleaned_data["upload_file"]
+      #del cleaned_data["upload_file"]
+      
+    if linewidth < 30:
+      msg = 'Linewidth must be < 30!'
+      self._errors["linewidth"] = self.error_class([msg])
+      del cleaned_data["linewidth"]
+      
       
        
     return self.cleaned_data

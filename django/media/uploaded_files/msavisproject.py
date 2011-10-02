@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import textwrap
+import thread
 import os,sys,re
 import subprocess
 import subprocess as sub
+import time
 from math import log
 
 import gtk
@@ -24,8 +26,9 @@ in order to use this.
 # READ ME: usuwamy powtarzajace sie sekwencje
 """
 
-MEDIA_PATH = "/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/"
+MEDIA_PATH = "/home/marta/Dokumenty/praktyki/django_nowy/media/"
 
+process_lock = open("process_lock","w+")
 
 try:
 	import matplotlib
@@ -76,6 +79,9 @@ def inpout():
     parser.add_argument('-o', '--output', type=str, nargs='?',default="MSAvis",
                         help='the name of the file where MSA visualization will be saved')
 
+    parser.add_argument('-p', '--psipred', type=str, nargs='?',default="runpsipred",
+                        help='decision of run program with database or without (default with database)')
+
     parser.add_argument('-a', '--aminoacids', type=int, nargs='?',default=30,
                         help='number of aminoacids in one row in graph. Enter the number greater than 0 (Default 30).')
 
@@ -88,9 +94,13 @@ def inpout():
     if args.aminoacids < 1:
         args.aminoacids=30
 
-    return args.inp, args.output, args.aminoacids, parser
+    if args.psipred == None:
+	args.psipred = "runpsipred_single"
 
-inp,out,nam,parser=inpout()
+    return args.inp, args.output, args.aminoacids, parser, args.psipred
+
+inp,out,nam,parser,psipred=inpout()
+
 
 #Checks if user gives file and if not print help 
 def checkinp(parser,inp):
@@ -351,7 +361,7 @@ def pred_secondary_structure(seqDict):
       output_handle.close()
 
     # calling runpsipred
-    p = sub.Popen([MEDIA_PATH + "uploaded_files/runpsipred_single", MEDIA_PATH + "uploaded_files/current_seq_temp.fasta"], cwd=MEDIA_PATH + "uploaded_files/", stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.STDOUT)
+    p = sub.Popen([MEDIA_PATH + "uploaded_files/" + psipred, MEDIA_PATH + "uploaded_files/current_seq_temp.fasta"], cwd=MEDIA_PATH + "uploaded_files/", stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.STDOUT)
     child_output, child_error = p.communicate(input="234")
 
     # loading one of the resulting files runpsipred
@@ -571,3 +581,5 @@ if __name__ == "__main__":
  cd_hit = dictionary
 
  fig = chart(consensus, hydro, chain, stru, cd_hit, out, nam)
+ time.sleep(39)
+ os.remove("process_lock")

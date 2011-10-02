@@ -24,8 +24,9 @@ in order to use this.
 # READ ME: usuwamy powtarzajace sie sekwencje
 """
 
-MEDIA_PATH = "/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/"
+MEDIA_PATH = "/home/marta/Dokumenty/praktyki/django/media/"
 
+process_lock = open("process_lock","w+")
 
 try:
 	import matplotlib
@@ -571,3 +572,4 @@ if __name__ == "__main__":
  cd_hit = dictionary
 
  fig = chart(consensus, hydro, chain, stru, cd_hit, out, nam)
+ os.remove("process_lock")
