@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <title> MSA VIS </title>
+  </head>
+  <body>
+      <h1>MSA vis</h1>
+      <p>  seqID: {{seqID}}; Picture:
+      <img src="/static/uploaded_files/MSAvis.svg" />
+      </p>
+      <p>
+      <a href="/static/uploaded_files/MSAvis.svg">Full screen svg</a>
+      </p>
+      <a href="/msa_vis/">New MSA visualization</a>
+  </body>
+</html> 
