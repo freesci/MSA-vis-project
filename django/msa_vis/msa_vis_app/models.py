@@ -2,20 +2,20 @@ from django.db import models
 from django.forms import ModelForm
 from django import forms
 
-# Create your models here.
+
 
 gchoices= (
 	('Slow', 'Slower - Run PSI-BLAST'),
         ('Fast', 'Faster - without PSI-BLAST'),
         )
-                
+              
 class Page(models.Model):
-  sequences = models.TextField(max_length = 400,blank= True,help_text="Enter a sequence alignment in FASTA format (max sequences length <= 400)") # help_text nie jest najladniejszym rozwiazaniem w widoku formularzu...
-  upload_file = models.FileField(upload_to = "uploaded_files", blank= True, help_text="Or upload a file") # uploaded_files jest katalogiem tworzonym wzgledem MEDIA_ROOT
-  email = models.EmailField(max_length = 20,blank= True,help_text="Send visualization to (optional):") #blank=True, aby to pole moglo pozostac puste przy wypelnianiu pol
-  unixtime = models.IntegerField(max_length = 40)
+  sequences = models.TextField(max_length = 400,blank= True,help_text="Enter a sequence alignment in FASTA format (max sequences length <= 400)")
+  upload_file = models.FileField(upload_to = "uploaded_files", blank= True, help_text="Or upload a file")
+  email = models.EmailField(max_length = 20,blank= True,help_text="Send visualization to (e-mail address; optional):")
+  timedate = models.DateTimeField(auto_now_add=True)
   choice = models.CharField(max_length=4, choices=gchoices,default = "Slow")
-  linewidth = models.IntegerField(max_length = 300,default=30,blank=True,null = True,help_text="Number of aminoacids in one row in graph (default=30)")
+  linewidth = models.IntegerField(max_length = 300,default=30,blank=True,null = True,help_text="Number of aminoacids in one row in graph (cannot be smaller than 30)")
     
 class PageForm(forms.ModelForm):
   choice = forms.CharField(max_length=4, widget=forms.Select(choices=gchoices),help_text="Predict secondary structure (PSIPRED) with PSI-BLAST or without")
@@ -98,7 +98,7 @@ class PageForm(forms.ModelForm):
       #del cleaned_data["upload_file"]
       
     if linewidth < 30:
-      msg = 'Linewidth must be < 30!'
+      msg = 'Linewidth must be > 30!'
       self._errors["linewidth"] = self.error_class([msg])
       del cleaned_data["linewidth"]
       

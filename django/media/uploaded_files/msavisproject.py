@@ -2,33 +2,37 @@
 # -*- coding: utf-8 -*-
 
 import textwrap
-import thread
 import os,sys,re
 import subprocess
 import subprocess as sub
-import time
 from math import log
 
 import gtk
 import numpy as np
 
-__doc__="""
-Use the msa-vis-project program to visualization MSA.
-You need to have a working version of
-- argparse
-- biopython
-- termcolor
-- cd-hit
-- blast2, runpsipred
-- gtk, matplotlib
-in order to use this.
+import simple_lock
 
-# READ ME: usuwamy powtarzajace sie sekwencje
+__doc__="""
+
+Server version.
+Usage:  msavisproject.py SLOW absolutefilepath picturesname linewidth MEDIA_PATH
+or
+	msavisproject.py FAST absolutefilepath picturesname linewidth MEDIA_PATH
+	
+Slow - use runpsipred
+Fast - use runpsipred_single
+
+absolutefilepath - path to file, that contains multiple alignment in FASTA format
+picturesname - name of the resulting image
+linewidth - number of aminoacids in one row in graph
+MEDIA_PATH - path to your media directory from settings.py
+
 """
 
-MEDIA_PATH = "/home/marta/Dokumenty/praktyki/django_nowy/media/"
+MEDIA_PATH = sys.argv[5]
 
-process_lock = open("process_lock","w+")
+lock = simple_lock.DjangoLock("process_lock")
+lock.acquire()
 
 try:
 	import matplotlib
@@ -43,144 +47,40 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
 
 try:
-	import argparse
-except ImportError:
-	print "Argparse packages not found. You may download it from: http://argparse.googlecode.com/files/argparse-1.2.1.tar.gz"
-	exit(1)
-
-try:
 	from Bio.Seq import Seq
 	from Bio.SeqRecord import SeqRecord
 	from Bio import SeqIO
 except ImportError:
 	print "Biopython packages not found. You may download it from: http://www.biosino.org/mirror/www.biopython.org/Download/default.htm"
 	exit(1)
+	
+import sys
+from Bio import AlignIO
+import StringIO
 
-try:
-	from termcolor import colored, cprint
-except ImportError:
-	print "Termcolor packages not found. You may download it from: http://pypi.python.org/pypi/termcolor"
-	exit(1)
+#takie utworzenie slownika mi nie dziala(AttributeError: 'str' object has no attribute 'id'):
+#handle = open(sys.argv[2], "rU")
+#dictionary={}
+#for record in SeqIO.parse(handle, "fasta") :
+	#dictionary[record.id]=record.seq.data
+#handle.close()
 
-#Creating help
 def inpout():
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                     description='Visualization of MSA',prog="MSA",
-                                     epilog=textwrap.dedent('''\
-                                     Details:
-                                     ----------
-                                     File with the MSA should contain sequences of the same length,
-                                     preceded by an identifier, which occurs after the ">".
-                                     Repetitive sequences will be omitted.
-                                     In other cases the file will be regarded as inpcorrect.'''))
+  f = open(sys.argv[2])
+  content = f.read()
+  x = StringIO.StringIO(content)
+  s = SeqIO.parse(x, "fasta")
+  dictionary = SeqIO.to_dict(s)
+  x.close()
+  s.close()
 
-    parser.add_argument('inp', type=str, nargs='*', help='file .fasta with MSA')
-
-    parser.add_argument('-o', '--output', type=str, nargs='?',default="MSAvis",
-                        help='the name of the file where MSA visualization will be saved')
-
-    parser.add_argument('-p', '--psipred', type=str, nargs='?',default="runpsipred",
-                        help='decision of run program with database or without (default with database)')
-
-    parser.add_argument('-a', '--aminoacids', type=int, nargs='?',default=30,
-                        help='number of aminoacids in one row in graph. Enter the number greater than 0 (Default 30).')
-
-    parser.add_argument('--version', action='version', version='%(prog)s 1.0\nAuthors: M.Habich, M.Maksymiuk, M.Stepniewska, K.Wreczycka')
-
-    args = parser.parse_args()
-    if len(os.path.splitext(args.output))>1:
-        args.output=os.path.splitext(args.output)[0]
-
-    if args.aminoacids < 1:
-        args.aminoacids=30
-
-    if args.psipred == None:
-	args.psipred = "runpsipred_single"
-
-    return args.inp, args.output, args.aminoacids, parser, args.psipred
-
-inp,out,nam,parser,psipred=inpout()
-
-
-#Checks if user gives file and if not print help 
-def checkinp(parser,inp):
-    if len(inp)==0:
-        print colored("Error: Not specified data file\n----------------------------------",'red')
-        parser.print_help()
-        exit()
-    return inp[0]
-
-inp=checkinp(parser, inp)
-
-#Creating dictionary of sequences
-def seqDict(ifile):
-    #Checks if in dictionary is sequence of the same name like the sequence which we wanted to add and whether they are the same
-    def has_key(d,key):
-        if d.has_key(key.id):
-            if d[key.id]!=key.seq.data:
-                key.id=key.id+"(1)"
-    	return key
-
-    #Checks if in dictionary is the same sequence like the sequence which we wanted to add
-    def has_value(d,value):
-       present=False
-       for val in d.items():
-           if val[1]==value.seq.data:
-               present=True
-       return present
+  psipredchoice = sys.argv[1]
+  if psipredchoice=="Slow":
+    psipredchoice = "runpsipred"
+  else:
+    psipredchoice = "runpsipred_single"
     
-    #Checks if sequence which we wanted to add is the same length as the other
-    def equal_length(seq,num,lens):
-        if len(seq.seq.data)!=lens:
-            print colored("Error: Sequences number "+str(num)+" aren't of the same length like the other\n-----------------------------------------",'red')
-            parser.print_help()
-            exit()
-
-    seqDict={}
-    iteration=1
-    
-    #Checks if your file exists and open it
-    try:
-	handle = open(ifile, "rU")
-    except IOError:
-	print colored("Error: File '"+ifile+"' doesn't exist\n----------------------------",'red')
-        exit()
-    
-    #Adding sequences to the dictionary
-    try:
-        for record in SeqIO.parse(handle, "fasta") :
-            if len(seqDict)==0: 
-                seqDict[record.id]=record
-	        lenseq=len(record.seq.data)
-            else:
-		if has_value(seqDict,record)==False:
-	            record=has_key(seqDict,record)
-		    equal_length(record,iteration,lenseq)
-	            seqDict[record.id]=record
-		    lenseq=len(record.seq.data)
-	    iteration+=1
-    except IndexError:
-        print colored("Error: Sequence without ID found\n---------------------------------------------",'red')
-        parser.print_help()
-        exit()
-
-    handle.close()
-
-    #Checks if file was empty
-    if len(seqDict)==0:
-        print colored("Error: The specified file is empty\n----------------------------",'red')
-        parser.print_help()
-        exit()     
-
-    return seqDict
-
-dictionary=seqDict(inp)
-
-#Checks if number of aminoacids which user has entered is greater than the length of the sequence
-if nam>len(dictionary.values()[0]):
-	nam=len(dictionary.values()[0])
-
-
+  return dictionary,psipredchoice,sys.argv[3],int(sys.argv[4])
 
 """
 arguments:
@@ -292,7 +192,7 @@ def consensus(seqDict):
 					aaDict[seqDict[key][i]]=1.0
 				n+=1
 		if n==0:
-			print colored("Error: Wrong MSA. There is no non-gap letter on position "+str(i)+"\n-----------------------------------------",'red')
+			print "Error: Wrong MSA. There is no non-gap letter on position "+str(i)
 			parser.print_help()
         		exit(1)
 
@@ -337,8 +237,9 @@ def consensus(seqDict):
     arguments:
 	seqDict - sequence dictionary
 """
-def pred_secondary_structure(seqDict):
+def pred_secondary_structure(seqDict,psipredchoice):
   
+
   id = seqDict.keys()
   sequences = seqDict.values()
 
@@ -361,7 +262,7 @@ def pred_secondary_structure(seqDict):
       output_handle.close()
 
     # calling runpsipred
-    p = sub.Popen([MEDIA_PATH + "uploaded_files/" + psipred, MEDIA_PATH + "uploaded_files/current_seq_temp.fasta"], cwd=MEDIA_PATH + "uploaded_files/", stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.STDOUT)
+    p = sub.Popen([MEDIA_PATH + "uploaded_files/"+psipredchoice, MEDIA_PATH + "uploaded_files/current_seq_temp.fasta"], cwd=MEDIA_PATH + "uploaded_files/", stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.STDOUT)
     child_output, child_error = p.communicate(input="234")
 
     # loading one of the resulting files runpsipred
@@ -573,13 +474,18 @@ def window(fig):
 
 
 if __name__ == "__main__":
-  
+
+ dictionary, psipredchoice,picturesname, linewidth = inpout()
  consensus = consensus(dictionary)
- stru = pred_secondary_structure(dictionary)
+ stru = pred_secondary_structure(dictionary,psipredchoice)
  hydro, chain = stat(dictionary,readKD())
  #cd_hit = cd_hit(dictionary)
  cd_hit = dictionary
-
- fig = chart(consensus, hydro, chain, stru, cd_hit, out, nam)
- time.sleep(39)
- os.remove("process_lock")
+ 
+ fig = chart(consensus, hydro, chain, stru, cd_hit, picturesname, linewidth)
+ 
+ # change name of picture to be sure, that visualization is finished.
+ os.rename(picturesname,"final"+picturesname)
+ 
+ lock.release()
+ del lock
