@@ -58,12 +58,6 @@ import sys
 from Bio import AlignIO
 import StringIO
 
-#takie utworzenie slownika mi nie dziala(AttributeError: 'str' object has no attribute 'id'):
-#handle = open(sys.argv[2], "rU")
-#dictionary={}
-#for record in SeqIO.parse(handle, "fasta") :
-	#dictionary[record.id]=record.seq.data
-#handle.close()
 
 def inpout():
   f = open(sys.argv[2])
@@ -484,7 +478,7 @@ if __name__ == "__main__":
  
  fig = chart(consensus, hydro, chain, stru, cd_hit, picturesname, linewidth)
  
- # change name of picture to be sure, that visualization is finished.
+ # change name of picture to make sure, that visualization is finished.
  os.rename(picturesname,"final"+picturesname)
  
  lock.release()
