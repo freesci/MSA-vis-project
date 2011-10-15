@@ -12,7 +12,7 @@ Slow - use runpsipred
 Fast - use runpsipred_single
 
 absolutefilepath - path to file, that contains multiple alignment in FASTA format
-jobID - name of the resulting image
+jobID - query's id
 linewidth - number of aminoacids in one row in graph
 MEDIA_PATH - path to media directory from settings.py
 email - name of user's email address where message will be send to
