@@ -16,7 +16,7 @@ def remove_img():
     unixtime = int(p.unixtime)
     if unixtime <= old:
       if os.path.exists(settings.MEDIA_ROOT+"uploaded_files/results/finalMSAvis"+str(p.id)+"-"+str(unixtime)+".svg"):	 
-	os.remove(settings.MEDIA_ROOT+"uploaded_files/result/finalMSAvis"+str(p.id)+"-"+str(unixtime)+".svg")
+	os.remove(settings.MEDIA_ROOT+"uploaded_files/results/finalMSAvis"+str(p.id)+"-"+str(unixtime)+".svg")
       p.delete()
 
 
