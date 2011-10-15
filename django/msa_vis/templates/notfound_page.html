@@ -1,6 +1,6 @@
- <html>
+ 
+<html>
   <head>
-    <meta http-equiv="refresh" content="15" />
     <title> MSAvis </title>
   </head>
   <body>
@@ -8,11 +8,10 @@
       <h1>MSA visualization </h1>
       <table cellpadding="1" cellspacing="1">
       <td bgcolor="#2E8B57" width="600">
-      <font color="#DCDCDC"><b>Please wait..</b></font>
+      <font color="#DCDCDC"><b>Sorry</b></font>
       </table>
-      <p>
-      <pre>Your job ID is {{jobID}} (from {{date}}). You can find it later by visiting the page you are seeing now.</pre>
+      <pre>Query with job ID {{jobID}} does not exist.</pre>
       <br>
-      </p>
+      <form><input type="button" value="New MSA visualization" onClick="window.location.href='/msa_vis'"></form>
   </body>
 </html>

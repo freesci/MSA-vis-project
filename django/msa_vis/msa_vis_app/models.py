@@ -8,12 +8,12 @@ gchoices= (
 	('Slow', 'Slower - Run PSI-BLAST'),
         ('Fast', 'Faster - without PSI-BLAST'),
         )
-              
+  
 class Page(models.Model):
   sequences = models.TextField(max_length = 400,blank= True,help_text="Enter a sequence alignment in FASTA format (max sequences length <= 400)")
   upload_file = models.FileField(upload_to = "uploaded_files", blank= True, help_text="Or upload a file")
   email = models.EmailField(max_length = 20,blank= True,help_text="Send visualization to (e-mail address; optional):")
-  timedate = models.DateTimeField(auto_now_add=True)
+  unixtime = models.IntegerField(max_length=50)
   choice = models.CharField(max_length=4, choices=gchoices,default = "Slow")
   linewidth = models.IntegerField(max_length = 300,default=30,blank=True,null = True,help_text="Number of aminoacids in one row in graph (cannot be smaller than 30)")
     
@@ -103,7 +103,6 @@ class PageForm(forms.ModelForm):
       del cleaned_data["linewidth"]
       
       
-       
     return self.cleaned_data
 
   class Meta:

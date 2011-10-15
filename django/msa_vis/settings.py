@@ -88,10 +88,6 @@ INSTALLED_APPS = (
     'msa_vis.msa_vis_app'
 )
 
-EMAIL_SEND_TO = ""
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_PORT = 587
+
+
 

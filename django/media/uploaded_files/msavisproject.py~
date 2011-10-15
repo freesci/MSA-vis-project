@@ -498,7 +498,7 @@ def send_email_to(mail,settingsPAGE_ADRESS,jobID,date):
     # Send the message via SMTP server.
     port = 465
     host = 'smtp.gmail.com'
-    user = "nashiraV"	
+    user = ""	
     password = ""	
     s=smtplib.SMTP_SSL(host,port)
     s.login(user, password)
