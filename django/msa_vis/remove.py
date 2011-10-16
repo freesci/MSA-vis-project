@@ -14,10 +14,8 @@ def remove_img():
   #old = time()-1209600	#two weeks
   #old = time()-2592000	#one month
   for p in Page.objects.all():
-    print p.unixtime
     unixtime = int(p.unixtime)
     if unixtime <= old:
-      print "old"
       if os.path.exists(settings.MEDIA_ROOT+"uploaded_files/results/finalMSAvis"+str(p.id)+"-"+str(unixtime)+".svg"):
 	os.remove(settings.MEDIA_ROOT+"uploaded_files/results/finalMSAvis"+str(p.id)+"-"+str(unixtime)+".svg")
       p.delete()
