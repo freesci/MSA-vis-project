@@ -7,13 +7,13 @@ Server version.
 Usage:  msavisproject.py SLOW absolutefilepath jobID linewidth MEDIA_PATH email settingsPAGE_ADRESS date
 or
 	msavisproject.py FAST absolutefilepath jobID linewidth MEDIA_PATH email settingsPAGE_ADRESS date
-	
+
 Slow - use runpsipred
 Fast - use runpsipred_single
 
 absolutefilepath - path to file, that contains multiple alignment in FASTA format
 jobID - query's id
-linewidth - number of aminoacids in one row in graph
+linewidth - number of amino acids in one row in graph
 MEDIA_PATH - path to media directory from settings.py
 email - name of user's email address where message will be send to
 settingsPAGE_ADRESS - adress where server is available, variable from settings.py
@@ -56,16 +56,16 @@ try:
 except ImportError:
 	print "Biopython packages not found. You may download it from: http://www.biosino.org/mirror/www.biopython.org/Download/default.htm"
 	exit(1)
-	
-	
+
+
 def inpout():
-  
+
   psipredchoice = sys.argv[1]
   if psipredchoice=="Slow":
     psipredchoice = "runpsipred"
   else:
     psipredchoice = "runpsipred_single"
-    
+
   f = open(sys.argv[2])
   content = f.read()
   x = StringIO.StringIO(content)
@@ -73,14 +73,15 @@ def inpout():
   dictionary = SeqIO.to_dict(s)
   x.close()
   s.close()
-    
-  return dictionary,psipredchoice,sys.argv[3],int(sys.argv[4]),sys.argv[6],sys.argv[7],sys.argv[8]
-  
-  
+
+  os.remove(sys.argv[2])
+  return dictionary,psipredchoice,sys.argv[3],int(sys.argv[4])
+
+
 """
 arguments:
 	list_of_seq - values of sequence dictionary
-"""	
+"""
 def cd_hit(dic_of_seq):
 
 	#if there are less than 15 seqs it is unnecessary to use cd-hit
@@ -117,14 +118,14 @@ def cd_hit(dic_of_seq):
 
 		# calling cd-hit
 		try:
-			b = sub.check_output(["cd-hit","-i",ip,"-o",op,"-c",str(th[nr-1][0]/100.),"-n",str(th[nr-1][1])])
+			b = sub.Popen(["cd-hit","-i",ip,"-o",op,"-c",str(th[nr-1][0]/100.),"-n",str(th[nr-1][1])], stdout=sub.PIPE).communicate()[0]
 		except Exception:
 			print "Please download and install cd-hit v4.5.4 from http://code.google.com/p/cdhit/downloads/list"
 			exit(1)
 		# parsing output
 		m = re.search('(finished).*(clusters)',b)
 
-		# new_length is number of seqs which we already have (in first step it is length of list_of_seq) 
+		# new_length is number of seqs which we already have (in first step it is length of list_of_seq)
 		new_length = int(m.group(0).split()[1])
 
 
@@ -149,14 +150,9 @@ def cd_hit(dic_of_seq):
 
 	# removing temporary files
 
-	os.remove("current_seq_temp.fasta")
-	os.remove("current_seq_temp.fasta.bak.clstr")
-	os.remove("current_seq_temp.fasta.clstr")
-
-	os.remove("new_seq_temp.fasta")
-	os.remove("new_seq_temp.fasta.bak.clstr")
-	os.remove("new_seq_temp.fasta.clstr")
-
+	to_remove=["current_seq_temp.fasta", "current_seq_temp.fasta.bak.clstr", "current_seq_temp.fasta.clstr", "new_seq_temp.fasta", "new_seq_temp.fasta.bak.clstr", "new_seq_temp.fasta.clstr"]
+	for i in to_remove:
+		if os.path.exists(i): os.remove(i)
 
 	return dic_of_rec
 
@@ -225,7 +221,7 @@ def consensus(seqDict):
 
 
 
-""" 
+"""
     Use runpsipred (with psi-blast) or runpsipred_single (without psi-blast) program to predicting secondary structure.
     Sequence database available on http://www.ebi.ac.uk/uniprot/database/download.html.
     See more in README.
@@ -233,7 +229,7 @@ def consensus(seqDict):
 	seqDict - sequence dictionary
 """
 def pred_secondary_structure(seqDict,psipredchoice):
-  
+
 
   id = seqDict.keys()
   sequences = seqDict.values()
@@ -241,10 +237,10 @@ def pred_secondary_structure(seqDict,psipredchoice):
   dic={}
   for i in xrange(len(sequences[0])):
     dic[i+1]=[]
-   
+
   # runpsipred program ignores gaps in sequence, that's why it's necessary to remember theirs position in sequence
   for number_seq,seq in enumerate(sequences, start=0):
-    where_no_gaps=[]  
+    where_no_gaps=[]
     for t,i in enumerate(seq, start=1):
       if i!="-":	where_no_gaps.append(t)
       else:		dic[t].append((0,0,0)) # gap
@@ -272,15 +268,15 @@ def pred_secondary_structure(seqDict,psipredchoice):
     for l,line in enumerate(file_tmp, start=1):
       pred,coil,helix,strand = line[7],float(line[11:16]),float(line[18:23]),float(line[25:30])
       dic[where_no_gaps[l-1]].append((coil,helix,strand))
-      
-  # removing temporary files 
+
+  # removing temporary files
   l = [MEDIA_PATH + "uploaded_files/current_seq_temp.fasta",
   MEDIA_PATH + "uploaded_files/current_seq_temp.ss",
   MEDIA_PATH + "uploaded_files/current_seq_temp.ss2",
   MEDIA_PATH + "uploaded_files/current_seq_temp.horiz"]
-  for i in l:  os.remove(i) 
-  
-  
+  for i in l:  os.remove(i)
+
+
   pred_structure=[]
   for value in dic.values():
     coil,helix,strand=0.0,0.0,0.0
@@ -296,9 +292,9 @@ def pred_secondary_structure(seqDict,psipredchoice):
   return pred_structure
 
 
-""" 
-  reading file with Kyte Doolitle scale 
-  
+"""
+  reading file with Kyte Doolitle scale
+
 """
 def readKD():
 
@@ -318,7 +314,7 @@ arguments:
 	KDscale - hydrophobicity and side-chain volume for every amino acid; dictionary returned by readKD function
 """
 def stat(seqDict, KDscale):
-  
+
 	id=seqDict.keys()
 	hydro=[]
 	chain=[]
@@ -344,7 +340,7 @@ def stat(seqDict, KDscale):
 """
 arguments:
 	consensus - consensus sequence (list)
-	hydro - average hydrophobicity (list) 
+	hydro - average hydrophobicity (list)
 	chain - average side chain volume (list)
 	stru - secondary structure (list)
 	cd_hit - cd-hit output (sequence dctionary)
@@ -355,10 +351,11 @@ def chart(consensus, hydro, chain, stru, cd_hit, filename, col):
 	minC=60.0	#min side-chain volume
 	maxC=230.0	#max side-chain volume
 	l = len(consensus)
+	if col > l: col=l
 	k = len(cd_hit)
 	rows = int(np.ceil(float(l)/col))	#number of rows
 
-	fig = plt.figure(figsize =(col/3,rows*(9+k/2.0)+4))
+	fig = plt.figure(figsize =(col/4.0+4,rows*(9+k/2.0)+4))
 
 	inchH=1.0/(rows*(9+k/2.0)+4)
 	colBarH = 3.0*inchH	#colorbar height
@@ -366,7 +363,7 @@ def chart(consensus, hydro, chain, stru, cd_hit, filename, col):
 	height=6.0*inchH		#barchart height
 	seqH = (k/2.0+1.0)*inchH	#sequence table height
 
-	inchW = 1.0/(col/3)
+	inchW = 1.0/(col/4.0+4)
 
 	wykr=plt.axes([2*inchW, 1-colBarH, 1-4*inchW, colBarH])
 	wykr.set_title("MSA Visualization", y=0.4)
@@ -399,10 +396,10 @@ def chart(consensus, hydro, chain, stru, cd_hit, filename, col):
 
 		if r==0:
 			#consensus table
-			tabCons = plt.table(cellText=[consensus[col*r:col*(r+1)]], cellLoc='center', rowLabels = ["consensus"], colWidths=widths, bbox=[0, 1.1, 1, 0.07])
+			tabCons = plt.table(cellText=[consensus[col*r:col*(r+1)]], cellLoc='center', rowLabels = ["consensus"], colWidths=widths, bbox=[0, 1.07, 1, 0.04])
 
 			#structure table
-			tabStru = plt.table(cellText=[stru[col*r:col*(r+1)]], cellLoc='center', rowLabels = ["structure"], colWidths=widths, bbox=[0, 1.02, 1, 0.07])
+			tabStru = plt.table(cellText=[stru[col*r:col*(r+1)]], cellLoc='center', rowLabels = ["structure"], colWidths=widths, bbox=[0, 1.02, 1, 0.04])
 
 			#sequence table
 			text=[]
@@ -416,33 +413,33 @@ def chart(consensus, hydro, chain, stru, cd_hit, filename, col):
 			widths=[1.0/col]*(l-col*(rows-1))
 
 			#consensus table
-			tabCons = plt.table(cellText=[consensus[col*(rows-1):]], cellLoc='center', colWidths=widths, bbox=[0, 1.1, 1, 0.07])
+			tabCons = plt.table(cellText=[consensus[col*(rows-1):]], cellLoc='center', colWidths=widths, bbox=[0, 1.07, 1, 0.04])
 
 			#structure table
-			tabStru = plt.table(cellText=[stru[col*(rows-1):]], cellLoc='center', colWidths=widths, bbox=[0, 1.02, 1, 0.07])
+			tabStru = plt.table(cellText=[stru[col*(rows-1):]], cellLoc='center', colWidths=widths, bbox=[0, 1.02, 1, 0.04])
 
-			#sequence table			
+			#sequence table
 			text=[]
 			for key in sorted(cd_hit.keys()):
 				text.append(cd_hit[key][col*r:col*(r+1)])
 			tabCdHit =  plt.table(cellText=text, cellLoc='center', colWidths=widths, bbox=[0, -(k/2.0+1.0)/6.0, 1, k/12.0])
 		else:
 			#consensus table
-			tabCons = plt.table(cellText=[consensus[col*r:col*(r+1)]], cellLoc='center', colWidths=widths, bbox=[0, 1.1, 1, 0.07])
+			tabCons = plt.table(cellText=[consensus[col*r:col*(r+1)]], cellLoc='center', colWidths=widths, bbox=[0, 1.07, 1, 0.04])
 
 			#structure table
-			tabStru = plt.table(cellText=[stru[col*r:col*(r+1)]], cellLoc='center', colWidths=widths, bbox=[0, 1.02, 1, 0.07])
+			tabStru = plt.table(cellText=[stru[col*r:col*(r+1)]], cellLoc='center', colWidths=widths, bbox=[0, 1.02, 1, 0.04])
 
-			#sequence table			
+			#sequence table
 			text=[]
 			for key in sorted(cd_hit.keys()):
 				text.append(cd_hit[key][col*r:col*(r+1)])
 			tabCdHit =  plt.table(cellText=text, cellLoc='center', colWidths=widths, bbox=[0, -(k/2.0+1.0)/6.0, 1, k/12.0])
 
 		tabCons.auto_set_font_size(False)
-		tabCons.set_fontsize(8)
+		tabCons.set_fontsize(9)
 		tabStru.auto_set_font_size(False)
-		tabStru.set_fontsize(8)
+		tabStru.set_fontsize(9)
 		tabCdHit.auto_set_font_size(False)
 		tabCdHit.set_fontsize(12)
 		for v in tabCdHit.get_celld().values():
@@ -451,82 +448,25 @@ def chart(consensus, hydro, chain, stru, cd_hit, filename, col):
 	plt.savefig(filename)
 	return fig
 
-def window(fig):
-	win = gtk.Window()
-	win.connect("destroy", gtk.main_quit)
-	win.set_default_size(1200, 1200)
-    	win.set_title("MSA Visualization")
-        
-    	canvas = FigureCanvas(fig)
-    	win.add(canvas)
-    	win.show_all()
-    	gtk.main()
-
-def send_email_to(mail,settingsPAGE_ADRESS,jobID,date):
-  if mail!="":
-    import smtplib
-    from email.mime.multipart import MIMEMultipart
-    from email.mime.text import MIMEText
-
-    # Create message container - the correct MIME type is multipart/alternative.
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = "MSAvis"
-    msg['From'] = "nashiraV@gmail.com"
-    msg['To'] = mail
-
-    # Create the body of the message (a plain-text and an HTML version).
-    text = 'Your job %s is complete (from %s).<p>You can fing your image <a href=%s/msa_vis/result/%s>here</a> or download below:' % (jobID, date, settingsPAGE_ADRESS, jobID)
-    html = """\
-    <html>
-      <head>Your job %s is complete (from %s).</head>
-      <body>
-	<p>You can fing your image <a href=%smsa_vis/result/%s>here</a> </p> or download below:'
-      </body>
-    </html>
-    """ % (jobID, date, settingsPAGE_ADRESS, jobID)
-
-    # Record the MIME types of both parts - text/plain and text/html.
-    part1 = MIMEText(text, 'plain')
-    part2 = MIMEText(html, 'html')
-
-    # Attach parts into message container.
-    # According to RFC 2046, the last part of a multipart message, in this case
-    # the HTML message, is best and preferred.
-    msg.attach(part1)
-    msg.attach(part2)
-
-    # Send the message via SMTP server.
-    port = 465
-    host = 'smtp.gmail.com'
-    user = "nashiraV"	
-    password = ""	
-    s=smtplib.SMTP_SSL(host,port)
-    s.login(user, password)
-    
-    s.sendmail(msg['From'],msg['To'],msg.as_string())
-    s.quit() 
 
 
 if __name__ == "__main__":
 
- dictionary, psipredchoice,jobID,linewidth,email_address,settingsPAGE_ADRESS,date = inpout()
+ dictionary, psipredchoice,jobID,linewidth = inpout()
  consensus = consensus(dictionary)
  stru = pred_secondary_structure(dictionary,psipredchoice)
  hydro, chain = stat(dictionary,readKD())
  #cd_hit = cd_hit(dictionary)
  cd_hit = dictionary
- 
+
  #name of the resulting image
  picturesname = 'MSAvis' + jobID + '.svg'
- 
+
  fig = chart(consensus, hydro, chain, stru, cd_hit, picturesname, linewidth)
- 
+
  # change name of picture to be sure, that visualization is finished.
  os.rename(picturesname,"final"+picturesname)
- 
- send_email_to(email_address,settingsPAGE_ADRESS,jobID,date)
- 
+
  lock.release()
  del lock
- 
- 
+

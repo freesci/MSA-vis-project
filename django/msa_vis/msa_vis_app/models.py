@@ -8,18 +8,18 @@ gchoices= (
 	('Slow', 'Slower - Run PSI-BLAST'),
         ('Fast', 'Faster - without PSI-BLAST'),
         )
-  
+
 class Page(models.Model):
   sequences = models.TextField(max_length = 400,blank= True,help_text="Enter a sequence alignment in FASTA format (max sequences length <= 400)")
   upload_file = models.FileField(upload_to = "uploaded_files", blank= True, help_text="Or upload a file")
-  email = models.EmailField(max_length = 20,blank= True,help_text="Send visualization to (e-mail address; optional):")
+  email = models.EmailField(max_length = 60,blank= True,help_text="Send visualization to (e-mail address; optional):")
   unixtime = models.IntegerField(max_length=50)
   choice = models.CharField(max_length=4, choices=gchoices,default = "Slow")
   linewidth = models.IntegerField(max_length = 300,default=30,blank=True,null = True,help_text="Number of aminoacids in one row in graph (cannot be smaller than 30)")
-    
+
 class PageForm(forms.ModelForm):
   choice = forms.CharField(max_length=4, widget=forms.Select(choices=gchoices),help_text="Predict secondary structure (PSIPRED) with PSI-BLAST or without")
-  
+
   def check_correctness(self,inputsequences,fields_name):
     try:
       from Bio import AlignIO
@@ -44,7 +44,7 @@ class PageForm(forms.ModelForm):
       msg = "Input is not in FASTA format or the specified file is empty!"
       self._errors[fields_name] = self.error_class([msg])
       return
-    l=0  
+    l=0
     for i in xrange(len(seqDict.values())):
       seqlength = len(seqDict.values()[i])
       if l==0:		l=seqlength
@@ -82,7 +82,7 @@ class PageForm(forms.ModelForm):
       msg = 'You must specify an input source!'
       self._errors["sequences"] = self.error_class([msg])
       del cleaned_data["sequences"]
-      
+
     if sequences!="" and upload_file!=None:
       msg = 'Select alignment or upload a local file'
       self._errors["sequences"] = self.error_class([msg])
@@ -91,21 +91,20 @@ class PageForm(forms.ModelForm):
     if sequences!="" and upload_file==None:
       self.check_correctness(sequences,"sequences")
      # del cleaned_data["sequences"]
-	
+
     if upload_file!=None and sequences=="":
       content = upload_file.read()
       self.check_correctness(content,"upload_file")
       #del cleaned_data["upload_file"]
-      
-    if linewidth < 30:
-      msg = 'Linewidth must be > 30!'
+
+    if linewidth < 1:
+      msg = 'Linewidth must be >= 1!'
       self._errors["linewidth"] = self.error_class([msg])
       del cleaned_data["linewidth"]
-      
-      
+
+
     return self.cleaned_data
 
   class Meta:
     model = Page
     fields = ('sequences',"upload_file", 'email',"linewidth","choice") # kolejnosc wyswietlania na stronie
-   
