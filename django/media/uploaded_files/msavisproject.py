@@ -4,23 +4,23 @@
 __doc__="""
 
 Server version.
-Usage:  msavisproject.py SLOW absolutefilepath jobID linewidth MEDIA_PATH email settingsPAGE_ADRESS date
+Usage:  msavisproject.py SLOW absolutefilepath jobID linewidth MEDIA_PATH email settingsPAGE_ADRESS date format
 or
-	msavisproject.py FAST absolutefilepath jobID linewidth MEDIA_PATH email settingsPAGE_ADRESS date
-
+	msavisproject.py FAST absolutefilepath jobID linewidth MEDIA_PATH email settingsPAGE_ADRESS date format
+	
 Slow - use runpsipred
 Fast - use runpsipred_single
 
-absolutefilepath - path to file, that contains multiple alignment in FASTA format
+absolutefilepath - path to file, that contains multiple alignment
 jobID - query's id
 linewidth - number of amino acids in one row in graph
 MEDIA_PATH - path to media directory from settings.py
 email - name of user's email address where message will be send to
 settingsPAGE_ADRESS - adress where server is available, variable from settings.py
 date - date of query
+format - format of alignment
 
 """
-
 import sys
 MEDIA_PATH = sys.argv[5]
 
@@ -35,7 +35,6 @@ from math import log
 
 import gtk
 import numpy as np
-from Bio import AlignIO
 
 try:
 	import matplotlib
@@ -52,36 +51,37 @@ from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanva
 try:
 	from Bio.Seq import Seq
 	from Bio.SeqRecord import SeqRecord
-	from Bio import SeqIO
+	from Bio import SeqIO,AlignIO
 except ImportError:
 	print "Biopython packages not found. You may download it from: http://www.biosino.org/mirror/www.biopython.org/Download/default.htm"
 	exit(1)
-
-
+	
+	
 def inpout():
-
+  
   psipredchoice = sys.argv[1]
   if psipredchoice=="Slow":
     psipredchoice = "runpsipred"
   else:
     psipredchoice = "runpsipred_single"
-
+    
+  format = sys.argv[9]
+  
   f = open(sys.argv[2])
   content = f.read()
   x = StringIO.StringIO(content)
-  s = SeqIO.parse(x, "fasta")
+  s = SeqIO.parse(x, format)
   dictionary = SeqIO.to_dict(s)
   x.close()
   s.close()
-
-  os.remove(sys.argv[2])
-  return dictionary,psipredchoice,sys.argv[3],int(sys.argv[4])
-
-
+    
+  return dictionary,psipredchoice,sys.argv[3],int(sys.argv[4]),sys.argv[6],sys.argv[7],sys.argv[8]
+  
+  
 """
 arguments:
 	list_of_seq - values of sequence dictionary
-"""
+"""	
 def cd_hit(dic_of_seq):
 
 	#if there are less than 15 seqs it is unnecessary to use cd-hit
@@ -118,14 +118,15 @@ def cd_hit(dic_of_seq):
 
 		# calling cd-hit
 		try:
-			b = sub.Popen(["cd-hit","-i",ip,"-o",op,"-c",str(th[nr-1][0]/100.),"-n",str(th[nr-1][1])], stdout=sub.PIPE).communicate()[0]
+			b = sub.Popen(["cd-hit","-i",ip,"-o",op,"-c",str(th[nr-1][0]/100.),"-n",str(th[nr-1][1])],stdout=sub.PIPE, stdin=sub.PIPE, stderr=sub.STDOUT)
+			child_output, child_error = b.communicate(input="234")
 		except Exception:
 			print "Please download and install cd-hit v4.5.4 from http://code.google.com/p/cdhit/downloads/list"
 			exit(1)
 		# parsing output
 		m = re.search('(finished).*(clusters)',b)
 
-		# new_length is number of seqs which we already have (in first step it is length of list_of_seq)
+		# new_length is number of seqs which we already have (in first step it is length of list_of_seq) 
 		new_length = int(m.group(0).split()[1])
 
 
@@ -155,7 +156,6 @@ def cd_hit(dic_of_seq):
 		if os.path.exists(i): os.remove(i)
 
 	return dic_of_rec
-
 
 
 
@@ -221,7 +221,7 @@ def consensus(seqDict):
 
 
 
-"""
+""" 
     Use runpsipred (with psi-blast) or runpsipred_single (without psi-blast) program to predicting secondary structure.
     Sequence database available on http://www.ebi.ac.uk/uniprot/database/download.html.
     See more in README.
@@ -229,7 +229,7 @@ def consensus(seqDict):
 	seqDict - sequence dictionary
 """
 def pred_secondary_structure(seqDict,psipredchoice):
-
+  
 
   id = seqDict.keys()
   sequences = seqDict.values()
@@ -237,10 +237,10 @@ def pred_secondary_structure(seqDict,psipredchoice):
   dic={}
   for i in xrange(len(sequences[0])):
     dic[i+1]=[]
-
+   
   # runpsipred program ignores gaps in sequence, that's why it's necessary to remember theirs position in sequence
   for number_seq,seq in enumerate(sequences, start=0):
-    where_no_gaps=[]
+    where_no_gaps=[]  
     for t,i in enumerate(seq, start=1):
       if i!="-":	where_no_gaps.append(t)
       else:		dic[t].append((0,0,0)) # gap
@@ -268,15 +268,15 @@ def pred_secondary_structure(seqDict,psipredchoice):
     for l,line in enumerate(file_tmp, start=1):
       pred,coil,helix,strand = line[7],float(line[11:16]),float(line[18:23]),float(line[25:30])
       dic[where_no_gaps[l-1]].append((coil,helix,strand))
-
-  # removing temporary files
+      
+  # removing temporary files 
   l = [MEDIA_PATH + "uploaded_files/current_seq_temp.fasta",
   MEDIA_PATH + "uploaded_files/current_seq_temp.ss",
   MEDIA_PATH + "uploaded_files/current_seq_temp.ss2",
   MEDIA_PATH + "uploaded_files/current_seq_temp.horiz"]
-  for i in l:  os.remove(i)
-
-
+  for i in l:  os.remove(i) 
+  
+  
   pred_structure=[]
   for value in dic.values():
     coil,helix,strand=0.0,0.0,0.0
@@ -292,9 +292,9 @@ def pred_secondary_structure(seqDict,psipredchoice):
   return pred_structure
 
 
-"""
-  reading file with Kyte Doolitle scale
-
+""" 
+  reading file with Kyte Doolitle scale 
+  
 """
 def readKD():
 
@@ -314,7 +314,7 @@ arguments:
 	KDscale - hydrophobicity and side-chain volume for every amino acid; dictionary returned by readKD function
 """
 def stat(seqDict, KDscale):
-
+  
 	id=seqDict.keys()
 	hydro=[]
 	chain=[]
@@ -448,25 +448,39 @@ def chart(consensus, hydro, chain, stru, cd_hit, filename, col):
 	plt.savefig(filename)
 	return fig
 
-
+def window(fig):
+	win = gtk.Window()
+	win.connect("destroy", gtk.main_quit)
+	win.set_default_size(1200, 1200)
+    	win.set_title("MSA Visualization")
+        
+    	canvas = FigureCanvas(fig)
+    	win.add(canvas)
+    	win.show_all()
+    	gtk.main()
+ 
 
 if __name__ == "__main__":
 
- dictionary, psipredchoice,jobID,linewidth = inpout()
+ dictionary, psipredchoice,jobID,linewidth,email_address,settingsPAGE_ADRESS,date = inpout()
  consensus = consensus(dictionary)
  stru = pred_secondary_structure(dictionary,psipredchoice)
  hydro, chain = stat(dictionary,readKD())
- #cd_hit = cd_hit(dictionary)
- cd_hit = dictionary
-
+ cd_hit = cd_hit(dictionary)
+ 
  #name of the resulting image
  picturesname = 'MSAvis' + jobID + '.svg'
-
+ 
  fig = chart(consensus, hydro, chain, stru, cd_hit, picturesname, linewidth)
-
+ 
  # change name of picture to be sure, that visualization is finished.
  os.rename(picturesname,"final"+picturesname)
-
+ 
+ if email_address!="":
+  from mail import send_email
+  send_email(email_address,settingsPAGE_ADRESS,jobID,date)
+ 
  lock.release()
  del lock
-
+ 
+ 

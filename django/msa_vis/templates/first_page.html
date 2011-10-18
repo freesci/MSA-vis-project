@@ -41,13 +41,23 @@ ul.errorlist {
         <font color="#DCDCDC"><b>Input</b></font>
         </table>
 
+
+
+	<div class="fieldWrapper">
+
+	  <br>  {{form.format.help_text}}</br>
+            {{ form.format.errors }}
+		{{form.format}}
+        </div>
+
+
+
         <div class="fieldWrapper">
 
 	  <br>  {{form.sequences.help_text}} </br>
             {{ form.sequences.errors }}
 		{{form.sequences}}
         </div>
-
 
 
         <div class="fieldWrapper">

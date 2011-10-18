@@ -11,11 +11,11 @@
 # NOTE: Script modified to be more cluster friendly (DTJ April 2008)
 
 # The name of the BLAST data bank
-#set dbname = uniref90filt
-set dbname = swiss
+set dbname = uniref50filt
+#set dbname = swiss
 
 # Where the NCBI programs have been installed
-set ncbidir = /usr/local/bin
+set ncbidir = /usr/bin
 
 # Where the PSIPRED V2 programs have been installed
 set execdir = ./bin
