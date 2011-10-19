@@ -3,11 +3,9 @@ from django.forms import ModelForm
 from django import forms
 
 gformat = (('fasta', 'FASTA'),
-	   ('clustal','Clustal'),
-	   ('embl','EMBL'),
-	  # ('stockholm','Stockholm'),
-	  # ('genbank','Genbank'),
-	  # ('fastq','Fastq'),
+	   ('clustal','ALN/ClustalW2'),
+	   ('stockholm','Pfam/Stockholm format'),
+	   ('phylip','Phylip'),
 	   )
 
 gchoices= (
