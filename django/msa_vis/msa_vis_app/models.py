@@ -3,7 +3,7 @@ from django.forms import ModelForm
 from django import forms
 
 gformat = (('fasta', 'FASTA'),
-	   ('clustal','ALN/ClustalW2'),
+	   ('clustal','CLUSTAL'),
 	   ('stockholm','Pfam/Stockholm'),
 	   ('phylip','Phylip'),
 	   )
