@@ -4,7 +4,7 @@ from django import forms
 
 gformat = (('fasta', 'FASTA'),
 	   ('clustal','ALN/ClustalW2'),
-	   ('stockholm','Pfam/Stockholm format'),
+	   ('stockholm','Pfam/Stockholm'),
 	   ('phylip','Phylip'),
 	   )
 
@@ -14,7 +14,7 @@ gchoices= (
         )
   
 class Page(models.Model):
-  sequences = models.TextField(max_length = 400,blank= True,help_text="Enter a sequence alignment (max sequences length = 500)")
+  sequences = models.TextField(max_length = 400,blank= True,help_text="Enter a sequence alignment (max sequences length = 400)")
   upload_file = models.FileField(upload_to = "uploaded_files", blank= True, help_text="Or upload a file")
   email = models.EmailField(max_length = 60,blank= True,help_text="Send visualization to (e-mail address; optional)")
   unixtime = models.IntegerField(max_length=50)
@@ -43,8 +43,12 @@ class PageForm(forms.ModelForm):
     except ValueError:
       x.close()
       msg = "Input contains repeated names of sequences"
-      msg1 = "or you selected wrong input format!"
-      self._errors[fields_name] = self.error_class([msg,msg1])
+      self._errors[fields_name] = self.error_class([msg])
+      return
+    except:
+      x.close()
+      msg = "Selected wrong input format!"
+      self._errors[fields_name] = self.error_class([msg])
       return
     if len(seqDict)==0:
       x.close()
@@ -99,7 +103,7 @@ class PageForm(forms.ModelForm):
 
     if sequences!="" and upload_file==None:
       self.check_correctness(sequences,"sequences",format)
-     # del cleaned_data["sequences"]
+      #del cleaned_data["sequences"]
 	
     if upload_file!=None and sequences=="":
       content = upload_file.read()
@@ -116,5 +120,5 @@ class PageForm(forms.ModelForm):
 
   class Meta:
     model = Page
-    fields = ('format','sequences',"upload_file", 'email',"linewidth","choice") # kolejnosc wyswietlania na stronie
+    fields = ('format','sequences',"upload_file", 'email',"linewidth","choice")
    
