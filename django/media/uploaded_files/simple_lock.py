@@ -9,7 +9,7 @@ class DjangoLock:
         self.handle = open(filename, 'w')
 
     def acquire(self):
-        fcntl.flock(self.handle, fcntl.LOCK_EX | fcntl.LOCK_NB)  #/* do not block when locking */
+        fcntl.flock(self.handle, fcntl.LOCK_EX)  #/* exclusive file lock */
 
     def release(self):
         fcntl.flock(self.handle, fcntl.LOCK_UN)  #/* unlock file */
