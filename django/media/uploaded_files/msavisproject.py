@@ -125,7 +125,7 @@ def cd_hit(dic_of_seq):
 			print "Please download and install cd-hit v4.5.4 from http://code.google.com/p/cdhit/downloads/list"
 			exit(1)
 		# parsing output
-		m = re.search('(finished).*(clusters)',b)
+		m = re.search('(finished).*(clusters)',child_output)
 
 		# new_length is number of seqs which we already have (in first step it is length of list_of_seq) 
 		new_length = int(m.group(0).split()[1])
