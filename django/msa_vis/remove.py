@@ -7,29 +7,19 @@ setup_environ(settings)
 
 from msa_vis_app.models import Page
 
-
-def remove_recurse(path):
-        """equivalent to rm -rf path"""
-        for i in os.listdir(path):
-            full_path = path + "/" + i
-            if os.path.isdir(full_path):
-                remove_recurse(full_path)
-            else:
-                os.remove(full_path)
-        os.rmdir(path)
-
 def remove_img():
-  #old = time()  #now
+  old = time()		#now
   #old = time()-86400	#one day
-  old = time()-604800	#one week
+  #old = time()-604800	#one week
   #old = time()-1209600	#two weeks
   #old = time()-2592000	#one month
   for p in Page.objects.all():
     unixtime = int(p.unixtime)
     if unixtime <= old:
-      if os.path.exists(settings.MEDIA_ROOT+"uploaded_files/results/finalMSAvis"+str(p.id)+"-"+str(unixtime)+".svg"):	 
+      if os.path.exists(settings.MEDIA_ROOT+"uploaded_files/results/finalMSAvis"+str(p.id)+"-"+str(unixtime)+".svg"):
 	os.remove(settings.MEDIA_ROOT+"uploaded_files/results/finalMSAvis"+str(p.id)+"-"+str(unixtime)+".svg")
-	remove_recurse(settings.MEDIA_ROOT+"uploaded_files/input_files")
+      if p.upload_file!="" and os.path.exists(settings.MEDIA_ROOT+str(p.upload_file)):
+	os.remove(settings.MEDIA_ROOT+str(p.upload_file))
       p.delete()
 
 
