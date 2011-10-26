@@ -3,9 +3,8 @@ from django.forms import ModelForm
 from django import forms
 
 gformat = (('fasta', 'FASTA'),
-	   ('clustal','CLUSTAL'),
-	   ('stockholm','Pfam/Stockholm'),
-	   ('phylip','Phylip'),
+	   ('clustal','CLUSTAL(<=2.0)'),
+	   ('phylip','Phylip4|Phylip(interleaved)'),
 	   )
 
 gchoices= (
@@ -15,7 +14,7 @@ gchoices= (
   
 class Page(models.Model):
   sequences = models.TextField(max_length = 400,blank= True,help_text="Enter a sequence alignment (max sequences length = 400)")
-  upload_file = models.FileField(upload_to = "uploaded_files", blank= True, help_text="Or upload a file")
+  upload_file = models.FileField(upload_to = "uploaded_files/input_files", blank= True, help_text="Or upload a file")
   email = models.EmailField(max_length = 60,blank= True,help_text="Send visualization to (e-mail address; optional)")
   unixtime = models.IntegerField(max_length=50)
   choice = models.CharField(max_length=4, choices=gchoices,default = "Slow")
@@ -40,18 +39,17 @@ class PageForm(forms.ModelForm):
       return
     try:
       seqDict = SeqIO.to_dict(s)
-    except ValueError:
       x.close()
+    except ValueError:
       msg = "Input contains repeated names of sequences"
       self._errors[fields_name] = self.error_class([msg])
+      x.close()
       return
     except:
-      x.close()
       msg = "Selected wrong input format!"
       self._errors[fields_name] = self.error_class([msg])
       return
     if len(seqDict)==0:
-      x.close()
       msg = "Input is not in %s format or the specified file is empty!" % (format)
       self._errors[fields_name] = self.error_class([msg])
       return
@@ -61,13 +59,11 @@ class PageForm(forms.ModelForm):
       if l==0:		l=seqlength
       else:
 	if l!=seqlength:
-	  x.close()
-	  msg = "Sequence number %d isn't of the same length like the other" % i
+	  msg = "Sequence number %d isn't of the same length like the other" % (i+1)
 	  self._errors[fields_name] = self.error_class([msg])
 	  return
 
     if len(seqDict) < 2:
-      x.close()
       msg = "Input contains less than 2 sequences!"
       self._errors[fields_name] = self.error_class([msg])
       return
@@ -77,7 +73,6 @@ class PageForm(forms.ModelForm):
 	if seqDict[key][i]!="-":
 	  n+=1
     if n==0:
-      x.close()
       msg = "Wrong MSA. There is no non-gap letter on position %d!" % i
       self._errors[fields_name] = self.error_class([msg])
       return

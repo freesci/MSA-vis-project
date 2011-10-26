@@ -32,6 +32,7 @@ lock.acquire()
 import textwrap,os,re,StringIO
 import subprocess as sub
 from math import log
+from string import upper
 
 import gtk
 import numpy as np
@@ -66,7 +67,7 @@ def inpout():
     psipredchoice = "runpsipred_single"
     
   format = sys.argv[9]
-  
+   
   f = open(sys.argv[2])
   content = f.read()
   x = StringIO.StringIO(content)
@@ -74,7 +75,7 @@ def inpout():
   dictionary = SeqIO.to_dict(s)
   x.close()
   s.close()
-    
+  
   return dictionary,psipredchoice,sys.argv[3],int(sys.argv[4]),sys.argv[6],sys.argv[7],sys.argv[8]
   
   
@@ -152,8 +153,8 @@ def cd_hit(dic_of_seq):
 	# removing temporary files
 
 	to_remove=["current_seq_temp.fasta", "current_seq_temp.fasta.bak.clstr", "current_seq_temp.fasta.clstr", "new_seq_temp.fasta", "new_seq_temp.fasta.bak.clstr", "new_seq_temp.fasta.clstr"]
-	for i in to_remove:
-		if os.path.exists(i): os.remove(i)
+	#for i in to_remove:
+	#	if os.path.exists(i): os.remove(i)
 
 	return dic_of_rec
 
@@ -177,14 +178,13 @@ def consensus(seqDict):
 	for i in xrange(len(seqDict[id[0]])):
 		for key in id:
 			if seqDict[key][i]!="-":
-				if aaDict.has_key(seqDict[key][i]):
-					aaDict[seqDict[key][i]]+=1.0
+				if aaDict.has_key(upper(seqDict[key][i])):
+					aaDict[upper(seqDict[key][i])]+=1.0
 				else:
-					aaDict[seqDict[key][i]]=1.0
+					aaDict[upper(seqDict[key][i])]=1.0
 				n+=1
 		if n==0:
 			print "Error: Wrong MSA. There is no non-gap letter on position "+str(i)
-			parser.print_help()
         		exit(1)
 
 		for k in sorted(aaDict):
@@ -269,6 +269,7 @@ def pred_secondary_structure(seqDict,psipredchoice):
       pred,coil,helix,strand = line[7],float(line[11:16]),float(line[18:23]),float(line[25:30])
       dic[where_no_gaps[l-1]].append((coil,helix,strand))
       
+      
   # removing temporary files 
   l = [MEDIA_PATH + "uploaded_files/current_seq_temp.fasta",
   MEDIA_PATH + "uploaded_files/current_seq_temp.ss",
@@ -278,16 +279,21 @@ def pred_secondary_structure(seqDict,psipredchoice):
   
   
   pred_structure=[]
-  for value in dic.values():
+  
+  for value in xrange(1, len(dic)+1):
     coil,helix,strand=0.0,0.0,0.0
-    for tuple in value:
+    for tuple in dic[value]:
 	coil+=tuple[0]
 	helix+=tuple[1]
 	strand+=tuple[2]
     maximum = max(coil,helix,strand)
-    if maximum==coil:	pred_structure.append("c")
-    if maximum==helix:	pred_structure.append("h")
-    if maximum==strand:	pred_structure.append("s")
+
+    if maximum==coil:	
+      pred_structure.append("c")
+    elif maximum==helix:	
+      pred_structure.append("h")
+    else: #maximum==strand:	
+      pred_structure.append("s")
 
   return pred_structure
 
@@ -314,7 +320,7 @@ arguments:
 	KDscale - hydrophobicity and side-chain volume for every amino acid; dictionary returned by readKD function
 """
 def stat(seqDict, KDscale):
-  
+
 	id=seqDict.keys()
 	hydro=[]
 	chain=[]
@@ -324,8 +330,8 @@ def stat(seqDict, KDscale):
 	for i in xrange(len(seqDict[id[0]])):
 		for j in id:
 			if seqDict[j][i]!='-':
-				tmpH+=KDscale[seqDict[j][i]]['h']
-				tmpV+=KDscale[seqDict[j][i]]['v']
+				tmpH+=KDscale[upper(seqDict[j][i])]['h']
+				tmpV+=KDscale[upper(seqDict[j][i])]['v']
 				n+=1.0
 		hydro.append(tmpH/n)
 		chain.append(tmpV/n)
@@ -406,7 +412,8 @@ def chart(consensus, hydro, chain, stru, cd_hit, filename, col):
 			labels=[]
 			for key in sorted(cd_hit.keys()):
 				text.append(cd_hit[key][col*r:col*(r+1)])
-				labels.append(key+": ")
+				if len(key)>15: labels.append(key[:15]+": ")
+				else: labels.append(key+": ")
 			tabCdHit =  plt.table(cellText=text, cellLoc='center', colWidths=widths, rowLabels = labels, bbox=[0, -(k/2.0+1.0)/6.0, 1, k/12.0])
 
 		elif r==rows-1:
@@ -448,6 +455,7 @@ def chart(consensus, hydro, chain, stru, cd_hit, filename, col):
 	plt.savefig(filename)
 	return fig
 
+
 def window(fig):
 	win = gtk.Window()
 	win.connect("destroy", gtk.main_quit)
@@ -462,25 +470,25 @@ def window(fig):
 
 if __name__ == "__main__":
 
- dictionary, psipredchoice,jobID,linewidth,email_address,settingsPAGE_ADRESS,date = inpout()
- consensus = consensus(dictionary)
- stru = pred_secondary_structure(dictionary,psipredchoice)
- hydro, chain = stat(dictionary,readKD())
- cd_hit = cd_hit(dictionary)
+  dictionary, psipredchoice,jobID,linewidth,email_address,settingsPAGE_ADRESS,date = inpout()
+  consensus = consensus(dictionary)
+  stru = pred_secondary_structure(dictionary,psipredchoice)
+  hydro, chain = stat(dictionary,readKD())
+  cd_hit = cd_hit(dictionary)
+
+  #name of the resulting image
+  picturesname = 'MSAvis' + jobID + '.svg'
+
+  fig = chart(consensus, hydro, chain, stru, cd_hit, picturesname, linewidth)
+
+  # change name of picture to be sure, that visualization is finished.
+  os.rename(picturesname,"final"+picturesname)
+
+  if email_address!="":
+    from mail import send_email
+    send_email(email_address,settingsPAGE_ADRESS,jobID,date)
  
- #name of the resulting image
- picturesname = 'MSAvis' + jobID + '.svg'
- 
- fig = chart(consensus, hydro, chain, stru, cd_hit, picturesname, linewidth)
- 
- # change name of picture to be sure, that visualization is finished.
- os.rename(picturesname,"final"+picturesname)
- 
- if email_address!="":
-  from mail import send_email
-  send_email(email_address,settingsPAGE_ADRESS,jobID,date)
- 
- lock.release()
- del lock
+  lock.release()
+  del lock
  
  

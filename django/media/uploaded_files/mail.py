@@ -9,7 +9,7 @@ def send_email(mail,settingsPAGE_ADRESS,jobID,date):
 
   # Create message container - the correct MIME type is multipart/alternative.
   msg = MIMEMultipart('alternative')
-  msg['Subject'] = "MSAvis"
+  msg['Subject'] = "MSAvis: job %s completed" % jobID
   msg['From'] = ""
   msg['To'] = mail
 
@@ -33,18 +33,6 @@ def send_email(mail,settingsPAGE_ADRESS,jobID,date):
   # the HTML message, is best and preferred.
   msg.attach(part1)
   msg.attach(part2)
-
-  """
-  # This example assumes the image
-  from email.MIMEImage import MIMEImage
-  fp = open(MEDIA_PATH+'uploaded_files/results/final' + 'MSAvis' + jobID + '.svg', 'rb')
-  msgImage = MIMEImage(fp.read(),_subtype="svg")
-  fp.close()
-
-  # Define the image's ID as referenced above
-  msgImage.add_header('Content-ID', '<image1>')
-  msg.attach(msgImage)
-  """
 
   # Send the message via SMTP server.
   port = 465

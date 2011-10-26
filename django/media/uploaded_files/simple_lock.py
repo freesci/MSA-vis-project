@@ -1,4 +1,4 @@
-import os, fcntl
+import os,fcntl
 
 #dokumentacja flock(2) -  http://fuse4bsd.creo.hu/localcgi/man-cgi.cgi?flock+2
 class DjangoLock:
