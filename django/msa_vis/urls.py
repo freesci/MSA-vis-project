@@ -8,7 +8,7 @@ urlpatterns = patterns('',
     # Example:
      #(r'^msa_vis/', include('msa_vis.foo.urls'))
      (r'^msa_vis/$', 'msa_vis.msa_vis_app.views.first_page'),
-     (r'^msa_vis/result/(\d+)-(\d+)/$', 'msa_vis.msa_vis_app.views.second_page'),
+     (r'^msa_vis/result/(\d+)-(\d+)-(\d+)/$', 'msa_vis.msa_vis_app.views.second_page'),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:

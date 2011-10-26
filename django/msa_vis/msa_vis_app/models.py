@@ -26,7 +26,7 @@ class PageForm(forms.ModelForm):
   format = forms.CharField(widget=forms.Select(choices=gformat),help_text="Select input sequence format")
   
   
-  def check_correctness(self,inputsequences,fields_name,format):
+  def check_correctness(self,inputsequences,fields_name,format,cleaned_data):
     try:
       from Bio import AlignIO,SeqIO
       import StringIO
@@ -62,13 +62,12 @@ class PageForm(forms.ModelForm):
 	  msg = "Sequence number %d isn't of the same length like the other" % (i+1)
 	  self._errors[fields_name] = self.error_class([msg])
 	  return
-
     if len(seqDict) < 2:
       msg = "Input contains less than 2 sequences!"
       self._errors[fields_name] = self.error_class([msg])
       return
     n=0
-    for i in xrange(len(seqDict.values()[0].seq)):
+    for i in xrange(seqlength):
       for key in seqDict.keys():
 	if seqDict[key][i]!="-":
 	  n+=1
@@ -76,6 +75,9 @@ class PageForm(forms.ModelForm):
       msg = "Wrong MSA. There is no non-gap letter on position %d!" % i
       self._errors[fields_name] = self.error_class([msg])
       return
+      
+    cleaned_data["seqlength"]=seqlength
+
 
 
   def clean(self):
@@ -97,12 +99,12 @@ class PageForm(forms.ModelForm):
       del cleaned_data["sequences"]
 
     if sequences!="" and upload_file==None:
-      self.check_correctness(sequences,"sequences",format)
+      self.check_correctness(sequences,"sequences",format,cleaned_data)
       #del cleaned_data["sequences"]
 	
     if upload_file!=None and sequences=="":
       content = upload_file.read()
-      self.check_correctness(content,"upload_file",format)
+      self.check_correctness(content,"upload_file",format,cleaned_data)
       #del cleaned_data["upload_file"]
       
     if linewidth < 1:
@@ -110,7 +112,6 @@ class PageForm(forms.ModelForm):
       self._errors["linewidth"] = self.error_class([msg])
       del cleaned_data["linewidth"]
       
-    
     return self.cleaned_data
 
   class Meta:
