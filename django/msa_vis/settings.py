@@ -38,10 +38,14 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-# czyli miejse gdzie leza rzeczy (media), ktore uzywaja/wysla.
 MEDIA_ROOT = '/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/'
 
-PAGE_ADRESS = "http://127.0.0.1:8000/"
+#Absolute path to directory that contains our programs to visualization
+PROGRAMS_PATH = '/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/django/msa_vis/programs/'
+
+#Prefix to page address
+PAGE_ADDRESS = "http://127.0.0.1:8000/"
+
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
