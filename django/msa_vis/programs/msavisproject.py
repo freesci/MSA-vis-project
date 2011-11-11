@@ -4,7 +4,7 @@
 __doc__="""
 
 Server version.
-Usage:  msavisproject.py SLOW absolutefilepath jobID linewidth PROGRAMS_PATH format 
+Usage:  msavisproject.py SLOW absolutefilepath jobID linewidth PROGRAMS_PATH format
 or
 	msavisproject.py FAST absolutefilepath jobID linewidth PROGRAMS_PATH format
 
@@ -46,7 +46,7 @@ try:
 except ImportError:
 	print "Biopython packages not found. You may download it from: http://www.biosino.org/mirror/www.biopython.org/Download/default.htm"
 	exit(1)
-	
+
 
 
 
@@ -54,13 +54,13 @@ PROGRAMS_PATH = sys.argv[5]
 
 
 def inpout():
-  
+
   psipredchoice = sys.argv[1]
   if psipredchoice=="Slow":
     psipredchoice = "runpsipred"
   else:
     psipredchoice = "runpsipred_single"
-       
+
   format = sys.argv[6]
   f = open(sys.argv[2])
   content = f.read()
@@ -69,16 +69,16 @@ def inpout():
   dictionary = SeqIO.to_dict(s)
   x.close()
   s.close()
-  
+
   return dictionary,psipredchoice,sys.argv[3],int(sys.argv[4])
-  
-  
-  
-  
+
+
+
+
 """
 arguments:
 	list_of_seq - values of sequence dictionary
-"""	
+"""
 def cd_hit(dic_of_seq):
 
 	#if there are less than 15 seqs it is unnecessary to use cd-hit
@@ -123,7 +123,7 @@ def cd_hit(dic_of_seq):
 		# parsing output
 		m = re.search('(finished).*(clusters)',child_output)
 
-		# new_length is number of seqs which we already have (in first step it is length of list_of_seq) 
+		# new_length is number of seqs which we already have (in first step it is length of list_of_seq)
 		new_length = int(m.group(0).split()[1])
 
 
@@ -173,7 +173,7 @@ def consensus(seqDict):
 
 	for i in xrange(len(seqDict[id[0]])):
 		for key in id:
-			if seqDict[key][i]!="-":
+			if seqDict[key][i]!="-" and upper(seqDict[key][i])!="X":
 				if aaDict.has_key(upper(seqDict[key][i])):
 					aaDict[upper(seqDict[key][i])]+=1.0
 				else:
@@ -217,7 +217,7 @@ def consensus(seqDict):
 
 
 
-""" 
+"""
     Use runpsipred (with psi-blast) or runpsipred_single (without psi-blast) program to predicting secondary structure.
     Sequence database available on http://www.ebi.ac.uk/uniprot/database/download.html.
     See more in README.
@@ -225,7 +225,7 @@ def consensus(seqDict):
 	seqDict - sequence dictionary
 """
 def pred_secondary_structure(seqDict,psipredchoice):
-  
+
 
   id = seqDict.keys()
   sequences = seqDict.values()
@@ -233,10 +233,10 @@ def pred_secondary_structure(seqDict,psipredchoice):
   dic={}
   for i in xrange(len(sequences[0])):
     dic[i+1]=[]
-   
+
   # runpsipred program ignores gaps in sequence, that's why it's necessary to remember theirs position in sequence
   for number_seq,seq in enumerate(sequences, start=0):
-    where_no_gaps=[]  
+    where_no_gaps=[]
     for t,i in enumerate(seq, start=1):
       if i!="-":	where_no_gaps.append(t)
       else:		dic[t].append((0,0,0)) # gap
@@ -264,18 +264,18 @@ def pred_secondary_structure(seqDict,psipredchoice):
     for l,line in enumerate(file_tmp, start=1):
       pred,coil,helix,strand = line[7],float(line[11:16]),float(line[18:23]),float(line[25:30])
       dic[where_no_gaps[l-1]].append((coil,helix,strand))
-      
-      
-  # removing temporary files 
+
+
+  # removing temporary files
   l = [PROGRAMS_PATH+"current_seq_temp.fasta",
   PROGRAMS_PATH+"current_seq_temp.ss",
   PROGRAMS_PATH+"current_seq_temp.ss2",
   PROGRAMS_PATH+"current_seq_temp.horiz"]
-  for i in l:  os.remove(i) 
-  
-  
+  for i in l:  os.remove(i)
+
+
   pred_structure=[]
-  
+
   for value in xrange(1, len(dic)+1):
     coil,helix,strand=0.0,0.0,0.0
     for tuple in dic[value]:
@@ -284,20 +284,20 @@ def pred_secondary_structure(seqDict,psipredchoice):
 	strand+=tuple[2]
     maximum = max(coil,helix,strand)
 
-    if maximum==coil:	
+    if maximum==coil:
       pred_structure.append("c")
-    elif maximum==helix:	
+    elif maximum==helix:
       pred_structure.append("h")
-    else: #maximum==strand:	
+    else: #maximum==strand:
       pred_structure.append("s")
 
 
   return pred_structure
 
 
-""" 
-  reading file with Kyte Doolitle scale 
-  
+"""
+  reading file with Kyte Doolitle scale
+
 """
 def readKD():
 
@@ -324,7 +324,7 @@ def stat(seqDict, KDscale):
 	n=0
 	for i in xrange(len(seqDict[id[0]])):
 		for j in id:
-			if seqDict[j][i]!='-':
+			if seqDict[j][i]!='-' and upper(seqDict[j][i])!='X':
 				tmpH+=KDscale[upper(seqDict[j][i])]['h']
 				tmpV+=KDscale[upper(seqDict[j][i])]['v']
 				n+=1.0
@@ -456,27 +456,27 @@ def window(fig):
 	win.connect("destroy", gtk.main_quit)
 	win.set_default_size(1200, 1200)
     	win.set_title("MSA Visualization")
-        
+
     	canvas = FigureCanvas(fig)
     	win.add(canvas)
     	win.show_all()
     	gtk.main()
- 
+
 
 if __name__ == "__main__":
 
   dictionary, psipredchoice,jobID,linewidth = inpout()
-  
+
   consensus = consensus(dictionary)
   stru = pred_secondary_structure(dictionary,psipredchoice)
   hydro, chain = stat(dictionary,readKD())
-    
+
   cd_hit = cd_hit(dictionary)
 
   #name of the resulting image
   picturesname = 'MSAvis' + jobID + '.svg'
 
   fig = chart(consensus, hydro, chain, stru, cd_hit, picturesname, linewidth)
-   
+
   # change name of picture to be sure, that visualization is finished.
   os.rename(picturesname,"final"+picturesname)
