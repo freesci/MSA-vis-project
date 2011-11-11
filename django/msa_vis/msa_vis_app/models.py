@@ -42,7 +42,8 @@ class PageForm(forms.ModelForm):
       x.close()
     except ValueError:
       msg = "Input contains repeated names of sequences"
-      self._errors[fields_name] = self.error_class([msg])
+      msg1 = "or Selected wrong input format!"
+      self._errors[fields_name] = self.error_class([msg,msg1])
       x.close()
       return
     except:
@@ -59,7 +60,7 @@ class PageForm(forms.ModelForm):
       if l==0:		l=seqlength
       else:
 	if l!=seqlength:
-	  msg = "Sequence number %d isn't of the same length like the other" % (i+1)
+	  msg = "At least one of sequences isn't of the same length like the other"
 	  self._errors[fields_name] = self.error_class([msg])
 	  return
     if len(seqDict) < 2:

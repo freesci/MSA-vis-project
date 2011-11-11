@@ -13,22 +13,15 @@ format=$9
 
 function runvis()
 {
-    echo "lock acquire"
-    $PROGRAMS_PATH/simple_lock.py acquire $PROGRAMS_PATH
-    #exec 200<process_lock
     
     echo "MSA visualization.."
-    $PROGRAMS_PATH/msavisproject.py $psipredchoice $file_absolutepath $jobID $linewidth $PROGRAMS_PATH $format
+    flock process_lock $PROGRAMS_PATH/msavisproject.py $psipredchoice $file_absolutepath $jobID $linewidth $PROGRAMS_PATH $format
     
     if [ ! $mail = "" ]
     then
       echo "sending email.."
       $PROGRAMS_PATH/mail.py $mail $PAGE_ADDRESS $jobID $datetime
     fi
-
-    echo "lock release"
-    $PROGRAMS_PATH/simple_lock.py release $PROGRAMS_PATH
-    #flock -n 200 || exit 1
 
     echo 'jobID' $jobID 'completed'
 }
