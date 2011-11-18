@@ -451,18 +451,6 @@ def chart(consensus, hydro, chain, stru, cd_hit, filename, col):
 	return fig
 
 
-def window(fig):
-	win = gtk.Window()
-	win.connect("destroy", gtk.main_quit)
-	win.set_default_size(1200, 1200)
-    	win.set_title("MSA Visualization")
-
-    	canvas = FigureCanvas(fig)
-    	win.add(canvas)
-    	win.show_all()
-    	gtk.main()
-
-
 if __name__ == "__main__":
 
   dictionary, psipredchoice,jobID,linewidth = inpout()
