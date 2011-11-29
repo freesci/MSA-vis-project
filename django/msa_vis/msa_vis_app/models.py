@@ -122,7 +122,7 @@ class PageForm(forms.ModelForm):
 
   class Meta:
     model = Page
-    fields = ('format','sequences',"upload_file","linewidth","choice")    
+    fields = ('format','sequences',"upload_file", 'email',"linewidth","choice")    
     
     
     
