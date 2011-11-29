@@ -83,7 +83,6 @@ class PageForm(forms.ModelForm):
 		return
 	n=0
 	
-    cleaned_data["seqlength"]=seqlength
 
 
 
@@ -123,7 +122,7 @@ class PageForm(forms.ModelForm):
 
   class Meta:
     model = Page
-    fields = ('format','sequences',"upload_file", 'email',"linewidth","choice")    
+    fields = ('format','sequences',"upload_file","linewidth","choice")    
     
     
     

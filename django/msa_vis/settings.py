@@ -5,7 +5,9 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+     ('Monika Maksymiuk', 'your_email@domain.com'),
+     ('Marta Stępniewska', 'your_email@domain.com'),
+     ('Katarzyna Wreczycka', 'your_email@domain.com'),
 )
 
         
@@ -24,7 +26,7 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 # although not all choices may be available on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'Europe/Warsaw'
+TIME_ZONE = 'Europe/London'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -38,13 +40,13 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/media/'
+MEDIA_ROOT = '/home/praktyki/media/'
 
 #Absolute path to directory that contains our programs to visualization
-PROGRAMS_PATH = '/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/django/msa_vis/programs/'
+PROGRAMS_PATH = '/home/praktyki/msa_vis/programs/'
 
 #Prefix to page address
-PAGE_ADDRESS = "http://127.0.0.1:8000/"
+PAGE_ADDRESS = "fokus.ibb.waw.pl"
 
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
@@ -79,7 +81,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/home/kasia/Pulpit/kasia/KASIA/IBB_praktyki/django/msa_vis/templates"
+    "/home/praktyki/msa_vis/templates"
     
 )
 

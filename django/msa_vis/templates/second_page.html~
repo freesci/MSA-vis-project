@@ -15,7 +15,7 @@
       <p> Result:
       </p>
       <p>
-      <a href="/static/uploaded_files/results/MSAvis{{jobID}}.svg"><img src="/static/uploaded_files/results/MSAvis{{jobID}}.svg" alt="MSAvis{{jobID}}.svg" width=1000 high=5000 />
+      <a href="/static/uploaded_files/results/MSAvis{{jobID}}.svg"><img src="/static/results/uploaded_files/MSAvis{{jobID}}.svg" alt="MSAvis{{jobID}}.svg" width=1000 high=5000 />
       </p>
       <p>
       <table cellpadding="1" cellspacing="1">
