@@ -10,7 +10,7 @@ urlpatterns = patterns('',
      (r'^msa_vis/$', 'msa_vis.msa_vis_app.views.first_page'),
      (r'^msa_vis/result/(\d+)-(\d+)/$', 'msa_vis.msa_vis_app.views.second_page'),
 
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
+    # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
@@ -19,7 +19,7 @@ urlpatterns = patterns('',
 )
 
 from django.conf import settings
-if settings.DEBUG: 
+if settings.DEBUG:
     urlpatterns += patterns('',
         (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     )

@@ -10,8 +10,8 @@ ADMINS = (
      ('Katarzyna Wreczycka', 'your_email@domain.com'),
 )
 
-        
-        
+
+
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -82,7 +82,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     "/home/praktyki/msa_vis/templates"
-    
+
 )
 
 INSTALLED_APPS = (

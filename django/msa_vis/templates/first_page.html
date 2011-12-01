@@ -1,5 +1,4 @@
 
-
 <style type="text/css">
 body {
  background-color: white;
@@ -28,6 +27,7 @@ ul.errorlist {
 
 <html>
   <head>
+    <!-- TODO MONIKA: można dodać jeszcze ikonę, która się wyświetli w zakładce (do zrobienia po konsultacji ze szczęsnym) -->
     <title> MSAvis </title>
   </head>
   <body>
@@ -37,21 +37,31 @@ ul.errorlist {
 <form action="/msa_vis/" method="POST" enctype="multipart/form-data" >
 
         <table cellpadding="1" cellspacing="1">
-        <td bgcolor="#2E8B57" width="650">
+        <td bgcolor="#2E8B57" width="600">
         <font color="#DCDCDC"><b>Input</b></font>
         </table>
 
+
+
+	<div class="fieldWrapper">
+
+	  <br>  {{form.format.help_text}}</br>
+            {{ form.format.errors }}
+		{{form.format}}
+        </div>
+
+
+
         <div class="fieldWrapper">
-	    
+
 	  <br>  {{form.sequences.help_text}} </br>
             {{ form.sequences.errors }}
 		{{form.sequences}}
         </div>
 
 
-
         <div class="fieldWrapper">
-	    
+
 	  <br>  {{form.upload_file.help_text}}</br>
             {{ form.upload_file.errors }}
 		{{form.upload_file}}
@@ -59,7 +69,7 @@ ul.errorlist {
 
         <p></p>
         <table cellpadding="1" cellspacing="1">
-        <td bgcolor="#2E8B57" width="650">
+        <td bgcolor="#2E8B57" width="600">
         <font color="#DCDCDC"><b>Options</b></font>
         </table>
 

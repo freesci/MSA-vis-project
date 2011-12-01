@@ -12,8 +12,8 @@ gchoices= (
 	('Slow', 'Slower - Run PSI-BLAST'),
         ('Fast', 'Faster - without PSI-BLAST'),
         )
-	    
-	    
+
+
 class Page(models.Model):
   sequences = models.TextField(max_length = 400,blank= True,help_text="Enter a sequence alignment (max sequences length = 400)")
   upload_file = models.FileField(upload_to = "uploaded_files/input_files", blank= True, help_text="Or upload a file")
@@ -25,8 +25,8 @@ class Page(models.Model):
 
 class PageForm(forms.ModelForm):
   choice = forms.CharField(max_length=4, widget=forms.Select(choices=gchoices),help_text="Predict secondary structure (PSIPRED) with PSI-BLAST or without")
-  format = forms.CharField(widget=forms.Select(choices=gformat),help_text="Select input sequence format") 
-        
+  format = forms.CharField(widget=forms.Select(choices=gformat),help_text="Select input sequence format")
+
   def check_correctness(self,inputsequences,fields_name,format,cleaned_data):
     try:
       from Bio import AlignIO,SeqIO
@@ -63,26 +63,26 @@ class PageForm(forms.ModelForm):
     l=0
     for i in xrange(len(seqDict.values())):
       seqlength = len(seqDict.values()[i])
-      if l==0:		
+      if l==0:
 	l=seqlength
       else:
 	if l!=seqlength:
 	  msg = "At least one of sequences isn't of the same length like the other"
 	  self._errors[fields_name] = self.error_class([msg])
-	  return  
+	  return
     n=0
-    id=seqDict.keys()  		
+    id=seqDict.keys()
     for i in xrange(len(seqDict[id[0]])):
 	for key in id:
 		if seqDict[key][i]!="-" and upper(seqDict[key][i])!="X":
 			n+=1
 	if n==0:
 		msg1 = "Wrong MSA. There is no non-gap letter on position "+str(i)
-		msg2 = "(Amino acid X is treated like a gap)" 
+		msg2 = "(Amino acid X is treated like a gap)"
 		self._errors[fields_name] = self.error_class([msg1,msg2])
 		return
 	n=0
-	
+
 
 
 
@@ -122,9 +122,8 @@ class PageForm(forms.ModelForm):
 
   class Meta:
     model = Page
-    fields = ('format','sequences',"upload_file", 'email',"linewidth","choice")    
-    
-    
-    
-    
-   
+    fields = ('format','sequences',"upload_file", 'email',"linewidth","choice")
+
+
+
+
