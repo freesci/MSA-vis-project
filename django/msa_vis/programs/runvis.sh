@@ -15,7 +15,7 @@ function runvis()
 {
     
     echo "MSA visualization.."
-    flock process_lock $PROGRAMS_PATH/msavisproject.py $psipredchoice $file_absolutepath $jobID $linewidth $PROGRAMS_PATH $format
+    flock $PROGRAMS_PATH/process_lock $PROGRAMS_PATH/msavisproject.py $psipredchoice $file_absolutepath $jobID $linewidth $PROGRAMS_PATH $format
     
     if [ ! $mail = "" ]
     then
