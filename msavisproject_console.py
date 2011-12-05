@@ -18,7 +18,7 @@ You need to have a working version of
 - termcolor
 - cd-hit
 - blast2, runpsipred
-- gtk, matplotlib
+- matplotlib
 in order to use this.
 
 """
